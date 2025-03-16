@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import java.io.IOException;
 import java.time.format.DateTimeParseException;
 
 public class TaskApp extends Application {
@@ -57,7 +56,7 @@ public class TaskApp extends Application {
         root.setAlignment(Pos.CENTER);
 
         // Заголовок
-        Label title = new Label("Управление задачами");
+        Label title = new Label("Beresta");
         root.getChildren().add(title);
 
         // Создание новой задачи
@@ -122,17 +121,17 @@ public class TaskApp extends Application {
 
         // Редактирование задачи
         Label editTaskLabel = new Label("Редактировать задачу:");
-        TextField editIndexField = new TextField();
+        editIndexField = new TextField();
         editIndexField.setPromptText("Индекс задачи");
-        TextField editTitleField = new TextField();
+        editTitleField = new TextField();
         editTitleField.setPromptText("Новый заголовок");
-        TextField editDescriptionField = new TextField();
+        editDescriptionField = new TextField();
         editDescriptionField.setPromptText("Новое описание");
-        TextField editPriorityField = new TextField();
+        editPriorityField = new TextField();
         editPriorityField.setPromptText("Новый приоритет (1-4)");
-        TextField editDeadlineField = new TextField();
+        editDeadlineField = new TextField();
         editDeadlineField.setPromptText("Новый дедлайн (ДД/ММ/ГГГГ)");
-        TextField editWorkerField = new TextField();
+        editWorkerField = new TextField();
         editWorkerField.setPromptText("Новый исполнитель");
 
         Button editTaskButton = new Button("Редактировать задачу");
@@ -142,18 +141,18 @@ public class TaskApp extends Application {
                 if (!editDeadlineField.getText().isEmpty()) {
                     newDeadline = LocalDate.parse(editDeadlineField.getText(), dateFormatter); // Используем форматтер
                 }
+                String priority_string = editPriorityField.getText();
+                int priority_int = 0;
+                if (priority_string != null && !(priority_string.trim().isEmpty())) priority_int = Integer.parseInt(priority_string);
 
                 taskList.editTask(
                         Integer.parseInt(editIndexField.getText()),
                         editTitleField.getText(),
                         editDescriptionField.getText(),
-                        Integer.parseInt(editPriorityField.getText()),
+                        priority_int,
                         newDeadline,
                         editWorkerField.getText()
                 );
-
-                clearEditFields();
-                updateTasksDisplay();
 
             } catch (DateTimeParseException e) {
                 showErrorAlert("Ошибка формата даты! Используйте ДД/ММ/ГГГГ");
@@ -162,6 +161,8 @@ public class TaskApp extends Application {
             } catch (Exception e) {
                 showErrorAlert(e.getMessage());
             }
+            clearEditFields();
+            updateTasksDisplay();
         });
 
         root.getChildren().addAll(editTaskLabel, editIndexField, editTitleField, editDescriptionField, editPriorityField, editDeadlineField, editWorkerField, editTaskButton);
@@ -173,7 +174,7 @@ public class TaskApp extends Application {
         tasksArea.setWrapText(true);    //  Добавляем перенос строк
         ScrollPane scrollPane = new ScrollPane(tasksArea);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(3000);
+        scrollPane.setPrefHeight(300);
 
         printTasksButton.setOnAction(event -> updateTasksDisplay());
 
@@ -198,7 +199,7 @@ public class TaskApp extends Application {
 
         // Создание сцены и отображение окна
         Scene scene = new Scene(root, 600, 800);
-        primaryStage.setTitle("Управление задачами");
+        primaryStage.setTitle("Beresta");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

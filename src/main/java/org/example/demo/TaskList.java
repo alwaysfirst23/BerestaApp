@@ -35,12 +35,11 @@ public class TaskList {
 
     // Метод для редактирования задачи по индексу
     public void editTask(int index, String title, String description, int priority, LocalDate deadline, String worker) {
-        if (index >= 0 && index < task_list.size()) { // индексация с нуля
-            Task task = task_list.get(index);
+        if (index > 0 && index <= task_list.size()) { // индексация с нуля
+            Task task = task_list.get(index-1);
             if (!(title == null || title.trim().isEmpty())) task.setTitle(title);
-            if (!(description == null || description.trim().isEmpty()))
-                task.setDescription(description); // Добавить проверку на непустоту
-            if (priority != 0) task.setPriority(priority);
+            if (!(description == null || description.trim().isEmpty()))  task.setDescription(description); // Добавить проверку на непустоту
+            if (priority > 0 && priority < 5) task.setPriority(priority);
             if (!(deadline == null)) task.setDeadline(deadline);
             if (!(worker == null || worker.trim().isEmpty())) task.setWorker(worker);
         } else {
