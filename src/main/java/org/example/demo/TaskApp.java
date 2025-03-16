@@ -11,10 +11,43 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 
 public class TaskApp extends Application {
     private TaskList taskList = new TaskList();
     private TextArea tasksArea = new TextArea();
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // Добавляем форматтер
+
+    // Объявляем поля как поля класса
+    private TextField titleField;
+    private TextField descriptionField;
+    private TextField priorityField;
+    private TextField deadlineField;
+    private TextField workerField;
+
+    private TextField editIndexField;
+    private TextField editTitleField;
+    private TextField editDescriptionField;
+    private TextField editPriorityField;
+    private TextField editDeadlineField;
+    private TextField editWorkerField;
+
+    private void clearFields() {
+        titleField.clear();
+        descriptionField.clear();
+        priorityField.clear();
+        deadlineField.clear();
+        workerField.clear();
+    }
+
+    private void clearEditFields() {
+        editIndexField.clear();
+        editTitleField.clear();
+        editDescriptionField.clear();
+        editPriorityField.clear();
+        editDeadlineField.clear();
+        editWorkerField.clear();
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -29,28 +62,40 @@ public class TaskApp extends Application {
 
         // Создание новой задачи
         Label newTaskLabel = new Label("Создать новую задачу:");
-        TextField titleField = new TextField();
+        titleField = new TextField(); // Инициализация поля класса
         titleField.setPromptText("Заголовок");
-        TextField descriptionField = new TextField();
+        descriptionField = new TextField(); // Инициализация поля класса
         descriptionField.setPromptText("Описание");
-        TextField priorityField = new TextField();
+        priorityField = new TextField(); // Инициализация поля класса
         priorityField.setPromptText("Приоритет (1-4)");
-        TextField deadlineField = new TextField();
+        deadlineField = new TextField(); // Инициализация поля класса
         deadlineField.setPromptText("Дедлайн (ДД/ММ/ГГГГ)");
-        TextField workerField = new TextField();
+        workerField = new TextField(); // Инициализация поля класса
         workerField.setPromptText("Исполнитель");
 
         Button createTaskButton = new Button("Создать задачу");
         createTaskButton.setOnAction(event -> {
             try {
-                taskList.createTask(titleField.getText(), descriptionField.getText(),
-                        Integer.parseInt(priorityField.getText()), deadlineField.getText().isEmpty() ? null : LocalDate.parse(deadlineField.getText()), workerField.getText());
-                titleField.clear();
-                descriptionField.clear();
-                priorityField.clear();
-                deadlineField.clear();
-                workerField.clear();
+                LocalDate deadline = null;
+                if (!deadlineField.getText().isEmpty()) {
+                    deadline = LocalDate.parse(deadlineField.getText(), dateFormatter); // Используем форматтер
+                }
+
+                taskList.createTask(
+                        titleField.getText(),
+                        descriptionField.getText(),
+                        Integer.parseInt(priorityField.getText()),
+                        deadline,
+                        workerField.getText()
+                );
+
+                clearFields();
                 updateTasksDisplay();
+
+            } catch (DateTimeParseException e) {
+                showErrorAlert("Ошибка формата даты! Используйте ДД/ММ/ГГГГ");
+            } catch (NumberFormatException e) {
+                showErrorAlert("Приоритет должен быть числом от 1 до 4");
             } catch (Exception e) {
                 showErrorAlert(e.getMessage());
             }
@@ -93,15 +138,27 @@ public class TaskApp extends Application {
         Button editTaskButton = new Button("Редактировать задачу");
         editTaskButton.setOnAction(event -> {
             try {
-                taskList.editTask(Integer.parseInt(editIndexField.getText()), editTitleField.getText(), editDescriptionField.getText(),
-                        Integer.parseInt(editPriorityField.getText()), editDeadlineField.getText().isEmpty() ? null : LocalDate.parse(editDeadlineField.getText()), editWorkerField.getText());
-                editIndexField.clear();
-                editTitleField.clear();
-                editDescriptionField.clear();
-                editPriorityField.clear();
-                editDeadlineField.clear();
-                editWorkerField.clear();
+                LocalDate newDeadline = null;
+                if (!editDeadlineField.getText().isEmpty()) {
+                    newDeadline = LocalDate.parse(editDeadlineField.getText(), dateFormatter); // Используем форматтер
+                }
+
+                taskList.editTask(
+                        Integer.parseInt(editIndexField.getText()),
+                        editTitleField.getText(),
+                        editDescriptionField.getText(),
+                        Integer.parseInt(editPriorityField.getText()),
+                        newDeadline,
+                        editWorkerField.getText()
+                );
+
+                clearEditFields();
                 updateTasksDisplay();
+
+            } catch (DateTimeParseException e) {
+                showErrorAlert("Ошибка формата даты! Используйте ДД/ММ/ГГГГ");
+            } catch (NumberFormatException e) {
+                showErrorAlert("Приоритет должен быть числом от 1 до 4");
             } catch (Exception e) {
                 showErrorAlert(e.getMessage());
             }
@@ -111,9 +168,12 @@ public class TaskApp extends Application {
 
         // Вывод всех задач
         Button printTasksButton = new Button("Вывести все задачи");
+
+        tasksArea.setPrefHeight(300);  //  <--  Добавляем высоту для TextArea
+        tasksArea.setWrapText(true);    //  Добавляем перенос строк
         ScrollPane scrollPane = new ScrollPane(tasksArea);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(300);
+        scrollPane.setPrefHeight(3000);
 
         printTasksButton.setOnAction(event -> updateTasksDisplay());
 
@@ -154,6 +214,7 @@ public class TaskApp extends Application {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 
     public static void main(String[] args) {
         launch(args);
