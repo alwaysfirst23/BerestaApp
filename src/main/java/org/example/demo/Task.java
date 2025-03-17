@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 public class Task {
     private String title; // Заголовок
     private String description; // Описание
-    private int priority; // Приоритет: 0-низкий, 1-средний, 2-срочно, 3-максимально срочно
+    private int priority; // Приоритет: 1-низкий, 2-средний, 3-срочно, 4-максимально срочно
     private LocalDate deadline; // Дедлайн
     private String worker; // Исполнитель
     private boolean done;
@@ -50,7 +50,7 @@ public class Task {
     }
 
     public void setPriority(int priority) throws IllegalArgumentException {
-        if (priority < 0 || priority > 3) {
+        if (priority < 1 || priority > 4){
             throw new IllegalArgumentException("Приоритет должен быть от 1 до 4");
         }
         this.priority = priority;
@@ -60,12 +60,12 @@ public class Task {
         return priority;
     }
 
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
     public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
     }
 
     public String getFormattedDeadline(String pattern) {
@@ -78,35 +78,12 @@ public class Task {
         return ChronoUnit.DAYS.between(today, deadline); // Вычисляем количество дней между сегодня и дедлайном
     }
 
-    public void print() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy"); // Создаем форматтер для даты
-        System.out.printf("%-25s %s%n", "Заголовок", title);
-        System.out.printf("%-25s %s%n", "Описание задачи", description);
-        System.out.printf("%-25s %s (%s)%n", "Приоритет", priority, whichPriority(priority));
-        System.out.printf("%-25s %s%n", "Дедлайн", deadline.format(formatter));
-        long days_left = daysUntilDeadline();
-        if (days_left >= 0) {
-            System.out.printf("%-25s %s%n", "Дней до дедлайна", days_left);
-        } else {
-            System.out.printf("%-25s %s%n", "Просрочено на (дней)", Math.abs(days_left));
-        }
-        System.out.printf("%-25s %s%n", "Исполнитель", worker);
-        if (done){
-            System.out.printf("%-25s %s%n", "Статус: ", "Выполнено");
-        } else {
-            System.out.printf("%-25s %s%n", "Статус: ", "В процессе");
-        }
+    public void setWorker(String worker) {
+        this.worker = worker;
     }
 
-
-    private String whichPriority(int priority){
-        switch (priority){
-            case 1: return "Вообще не срочно";
-            case 2: return "Не особо срочно";
-            case 3: return "Срочно";
-            case 4: return "Очень срочно!";
-        }
-        return "ERROR";
+    public String getWorker() {
+        return worker;
     }
 
     public void setDone(boolean done){
@@ -117,11 +94,13 @@ public class Task {
         return done;
     }
 
-    public void setWorker(String worker) {
-        this.worker = worker;
-    }
-
-    public String getWorker() {
-        return worker;
+    private String whichPriority(int priority){
+        return switch (priority) {
+            case 1 -> "Вообще не срочно";
+            case 2 -> "Не особо срочно";
+            case 3 -> "Срочно";
+            case 4 -> "Очень срочно!";
+            default -> "ERROR";
+        };
     }
 }
