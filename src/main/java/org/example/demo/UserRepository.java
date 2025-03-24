@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *   Класс работает с базой данных
@@ -18,11 +19,13 @@ public class UserRepository {
 
     public void registerUser(User user) {
         String sql = "INSERT INTO users(username, password) VALUES(?, ?)";
+        // Генерируем хэш пароля с автоматической солью
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
         try (Connection conn = DatabaseConnector.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPassword());
+            pstmt.setString(2, hashedPassword);
             pstmt.executeUpdate();
             System.out.println("Пользователь зарегистрирован.");
         } catch (SQLException e) {
