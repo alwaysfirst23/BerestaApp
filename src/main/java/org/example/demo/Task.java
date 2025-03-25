@@ -55,6 +55,11 @@ public class Task {
         this.priority = priority;
     }
 
+    /**
+     * Форматирует дату, приводя к String
+     * @param pattern дата
+     * @return строка
+     */
     public String getFormattedDeadline(String pattern) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
         return deadline.format(formatter);
@@ -65,6 +70,11 @@ public class Task {
         return ChronoUnit.DAYS.between(today, deadline); // Вычисляем количество дней между сегодня и дедлайном
     }
 
+    /**
+     * Возвращает текстовую расшифровку числового приоритета
+     * @param priority приоритет
+     * @return текст
+     */
     public String whichPriority(int priority){
         return switch (priority) {
             case 1 -> "Вообще не срочно";

@@ -11,7 +11,15 @@ public class TaskList {
         task_list = new LinkedList<>();
     }
 
-    // Метод для добавления задачи
+    /**
+     * Добавляет новую задачу в список
+     * @param title заголовок
+     * @param description описание задачи
+     * @param priority приоритет (1-4)
+     * @param date дедлайн
+     * @param worker исполнитель
+     * @throws IncorrectTask если некорректно заполнены поля
+     */
     public void createTask(String title, String description,
                            int priority, LocalDate date, String worker) throws IncorrectTask {
 
@@ -24,7 +32,10 @@ public class TaskList {
         task_list.add(task);
     }
 
-    // Метод для удаления задачи по индексу
+    /**
+     * Удаляет задачу с указанным номером
+     * @param index номер задачи
+     */
     public void removeTask(int index) {
         if (index > 0 && index <= task_list.size()) {
             task_list.remove(index - 1);
@@ -33,7 +44,15 @@ public class TaskList {
         }
     }
 
-    // Метод для редактирования задачи по индексу
+    /**
+     * Редактирует задачу по индексу
+     * @param index номер задачи
+     * @param title новый заголовок
+     * @param description новое описание
+     * @param priority новый приоритет
+     * @param deadline новый дедлайн
+     * @param worker новый исполнитель
+     */
     public void editTask(int index, String title, String description, int priority, LocalDate deadline, String worker) {
         if (index > 0 && index <= task_list.size()) { // индексация с нуля
             Task task = task_list.get(index-1);
@@ -47,7 +66,10 @@ public class TaskList {
         }
     }
 
-    // Метод для вывода всех задач
+    /**
+     * Возвращает список всех задач
+     * @return список задач
+     */
     public String printAllTasks() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < task_list.size(); i++) {
@@ -70,13 +92,6 @@ public class TaskList {
                     .append("\n\n");
         }
         return sb.toString().isEmpty() ? "Список задач пуст" : sb.toString();
-    }
-
-    public void editDone(int index) throws IncorrectTask {
-        if (index < 1 || index > task_list.size()) {
-            throw new IncorrectTask("Задача с таким индексом не найдена");
-        }
-        task_list.get(index - 1).setDone(true);
     }
 
     public LinkedList<Task> getTasks() {
