@@ -1,0 +1,14 @@
+.round-button {
+    -fx-background-radius: 30px;
+    -fx-min-width: 60px;
+    -fx-min-height: 60px;
+    -fx-max-width: 60px;
+    -fx-max-height: 60px;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+}
+    
+.round-button:hover {
+    -fx-background-color: #45a049;
+}

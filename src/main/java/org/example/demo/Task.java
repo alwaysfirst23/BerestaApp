@@ -65,7 +65,7 @@ public class Task {
         return ChronoUnit.DAYS.between(today, deadline); // Вычисляем количество дней между сегодня и дедлайном
     }
 
-    private String whichPriority(int priority){
+    public String whichPriority(int priority){
         return switch (priority) {
             case 1 -> "Вообще не срочно";
             case 2 -> "Не особо срочно";
