@@ -22,7 +22,7 @@ public class UserRepository {
         // Генерируем хэш пароля с автоматической солью
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
-        try (Connection conn = DatabaseConnector.connect();
+        try (Connection conn = DatabaseConnector.authConnect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, hashedPassword);
@@ -42,7 +42,7 @@ public class UserRepository {
         String sql = "SELECT * FROM users WHERE username = ?";
         User user = null;
 
-        try (Connection conn = DatabaseConnector.connect();
+        try (Connection conn = DatabaseConnector.authConnect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();

@@ -1,6 +1,7 @@
 package org.example.demo;
 
-import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
+import java.sql.SQLException;
+import java.time.LocalDate;
 
 /**
  * Класс для тестировки, сюда можно писать всё что хочется :)
@@ -8,6 +9,5 @@ import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 
 public class Test {
     public static void main(String[] args) {
-
     }
 }
