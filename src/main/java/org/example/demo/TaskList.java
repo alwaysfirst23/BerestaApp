@@ -11,7 +11,7 @@ import java.util.LinkedList;
  */
 public class TaskList {
     private LinkedList<Task> task_list;
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
      * Создаёт новую записать в базе данных

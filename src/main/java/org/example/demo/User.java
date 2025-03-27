@@ -1,6 +1,7 @@
 package org.example.demo;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**

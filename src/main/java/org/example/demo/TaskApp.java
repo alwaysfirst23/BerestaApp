@@ -47,6 +47,7 @@ public class TaskApp extends Application {
         BorderPane.setAlignment(bottomRightButton, Pos.BOTTOM_RIGHT);
 
         Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         primaryStage.setTitle("Task Manager");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -57,15 +58,23 @@ public class TaskApp extends Application {
         hbox.setPadding(new Insets(10));
         hbox.setStyle("-fx-background-color: #f0f0f0;");
 
-        Button menuButton = new Button("☰");
-        menuButton.setPrefSize(40, 40);
-        setupMenuButton(menuButton);
+        Button profileButton = new Button("Мой профиль");
+        //profileButton.setPrefSize(100, 40);
+        profileButton.getStyleClass().add("profile-button");
+        profileButton.setOnAction(e -> showProfile());
 
         TextField searchField = new TextField();
         searchField.setPromptText("Поиск...");
         HBox.setHgrow(searchField, Priority.ALWAYS);
 
-        hbox.getChildren().addAll(menuButton, searchField);
+        Button menuButton = new Button("☰");
+        menuButton.setPrefSize(30, 30);
+        setupMenuButton(menuButton);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        hbox.getChildren().addAll(profileButton, spacer, searchField, menuButton);
         return hbox;
     }
 
@@ -74,28 +83,37 @@ public class TaskApp extends Application {
         MenuItem themeItem = new MenuItem("Тема");
         MenuItem timeItem = new MenuItem("Тайм менеджмент");
 
-        themeItem.setOnAction(e -> changeTheme());
-        timeItem.setOnAction(e -> showTimeManagement());
+        themeItem.setOnAction(e -> {
+            changeTheme();
+            contextMenu.hide(); // Закрыть меню после выбора темы
+        });
+
+        timeItem.setOnAction(e -> {
+            showTimeManagement();
+            contextMenu.hide(); // Закрыть меню после выбора тайм-менеджмента
+        });
 
         contextMenu.getItems().addAll(themeItem, timeItem);
-
-        menuButton.setOnMouseEntered(e ->
-                contextMenu.show(menuButton, e.getScreenX(), e.getScreenY())
-        );
-
-        menuButton.setOnMouseExited(e ->
-                contextMenu.hide()
-        );
+        // Показывать меню при клике
+        menuButton.setOnMouseClicked(e -> {
+            contextMenu.show(menuButton, e.getScreenX(), e.getScreenY());
+        });
     }
+
 
     private void changeTheme() {
         // Логика смены темы
-        System.out.println("Смена темы...");
+        System.out.println("Тема...");
     }
 
     private void showTimeManagement() {
         // Логика тайм-менеджмента
-        System.out.println("Открытие тайм-менеджмента...");
+        System.out.println("Тайм-менеджмент...");
+    }
+
+    private void showProfile() {
+        // Логика просмотра профиля
+        System.out.println("Профиль...");
     }
 
     private StackPane createRoundButton() {
@@ -144,15 +162,22 @@ public class TaskApp extends Application {
             public void onChanged(ListChangeListener.Change<? extends String> change) {
                 while (change.next()) {
                     if (change.wasAdded()) {
-                        tasksHBox.getChildren().clear();
-                        for (String title : windowTitles) {
-                            VBox taskWindow = createTaskWindow(title, tasks);
+                        for (String title : change.getAddedSubList()) {
+                            ObservableList<Task> taskList = FXCollections.observableArrayList();
+                            VBox taskWindow = createTaskWindow(title, taskList);
                             tasksHBox.getChildren().add(taskWindow);
                         }
                     }
                 }
             }
         });
+
+        // Инициализация существующих окон
+        for (String title : windowTitles) {
+            ObservableList<Task> taskList = FXCollections.observableArrayList();
+            VBox taskWindow = createTaskWindow(title, taskList);
+            tasksHBox.getChildren().add(taskWindow);
+        }
 
         return scrollPane;
     }
@@ -168,42 +193,76 @@ public class TaskApp extends Application {
         ListView<Task> taskListView = new ListView<>(taskList);
         taskListView.setPrefHeight(400);
         taskListView.setCellFactory(lv -> new ListCell<Task>() {
+            private boolean isDescriptionVisible = false;
             @Override
             protected void updateItem(Task item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || item == null) {
                     setText(null);
-                    setStyle("");
+                    setGraphic(null);
                 } else {
-                    String status = item.isDone() ? "✅ Выполнено" : "❌ Не выполнено";
-                    String priority = item.whichPriority(item.getPriority());
-                    setText(String.format(
-                            "%s (%s) - %s\nПриоритет: %s",
-                            item.getTitle(),
-                            item.getFormattedDeadline("dd.MM.yyyy"),
-                            status,
-                            priority
-                    ));
+                    // Форматирование задачи
+                    Label titleLabel = new Label(item.getTitle());
+                    titleLabel.setStyle("-fx-font-weight: bold;");
+                    titleLabel.setWrapText(true);
+
+                    // Добавляем обработчик события на название задачи
+                    titleLabel.setOnMouseClicked(e -> {
+                        showEditTaskDialog(item, taskList);
+                    });
+
+                    Label descriptionLabel = new Label(item.getDescription());
+                    descriptionLabel.setWrapText(true);
+                    descriptionLabel.setVisible(isDescriptionVisible);
+
+                    Button toggleDescriptionButton = new Button(isDescriptionVisible ? "▲" : "▼");
+                    toggleDescriptionButton.setStyle("-fx-font-size: 10px;");
+                    toggleDescriptionButton.setOnAction(e -> {
+                        isDescriptionVisible = !isDescriptionVisible;
+                        descriptionLabel.setVisible(isDescriptionVisible);
+                        toggleDescriptionButton.setText(isDescriptionVisible ? "▲" : "▼");
+                    });
+
+                    HBox titleRow = new HBox(5, titleLabel, toggleDescriptionButton);
+                    titleRow.setAlignment(Pos.CENTER_LEFT);
+
+                    Label workerLabel = new Label("Исполнитель: " + item.getWorker());
+                    workerLabel.setWrapText(true);
+
+                    Label deadlineLabel = new Label("Дедлайн: " + item.getFormattedDeadline("dd.MM.yyyy"));
+                    deadlineLabel.setWrapText(true);
+
+                    Label priorityLabel = new Label("Срочность: " + item.whichPriority(item.getPriority()));
+                    priorityLabel.setWrapText(true);
+
+                    // Отметка задачи как выполненной
+                    Button markDoneButton = new Button(item.isDone() ? "Выполнено" : "Отметить как выполненное");
+                    markDoneButton.setOnAction(e -> {
+                        item.setDone(true);
+                        setStyle("-fx-text-fill: gray;");
+                        taskList.sort(Comparator.comparing(Task::isDone));
+                        taskListView.refresh();
+                    });
+
+                    VBox contentBox = new VBox(5, titleRow, descriptionLabel, workerLabel, deadlineLabel, priorityLabel, markDoneButton);
+                    contentBox.setPadding(new Insets(5));
+                    setGraphic(contentBox);
+
+                    // Меняем стиль для выполненных задач
+                    if (item.isDone()) {
+                        setStyle("-fx-text-fill: gray;");
+                    } else {
+                        setStyle("-fx-text-fill: black;");
+                    }
                 }
             }
         });
-
-        // Добавление двойного клика для редактирования
-        taskListView.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
-                Task selected = taskListView.getSelectionModel().getSelectedItem();
-                if (selected != null) {
-                    showEditTaskDialog(selected, taskList);
-                }
-            }
-        });
-
         ScrollPane listScroll = new ScrollPane(taskListView);
         listScroll.setFitToWidth(true);
 
         Button addButton = new Button("+");
-        addButton.setPrefSize(40, 40);
-        addButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+
+        addButton.getStyleClass().add("round-button-small");
         addButton.setOnAction(e -> showTaskDialog(taskList));
 
         VBox controls = new VBox(5);
@@ -340,13 +399,11 @@ public class TaskApp extends Application {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 try {
-                    // Проверка на null и пустые поля
                     if (titleField.getText().trim().isEmpty() ||
                             descriptionField.getText().trim().isEmpty()) {
                         throw new IllegalArgumentException("Заголовок и описание не могут быть пустыми");
                     }
 
-                    // Валидация дедлайна
                     LocalDate deadline = deadlinePicker.getValue();
                     if (deadline == null) {
                         throw new IllegalArgumentException("Укажите дедлайн");
@@ -355,12 +412,8 @@ public class TaskApp extends Application {
                         throw new IllegalArgumentException("Дедлайн не может быть в прошлом");
                     }
 
-                    // Валидация приоритета
-                    if (priorityBox.getValue() == null) {
-                        throw new IllegalArgumentException("Выберите приоритет");
-                    }
-
                     int priority = Integer.parseInt(priorityBox.getValue().split(" - ")[0]);
+
                     Task task = new Task(
                             titleField.getText(),
                             descriptionField.getText(),
@@ -368,7 +421,8 @@ public class TaskApp extends Application {
                             deadline,
                             workerField.getText()
                     );
-                    taskList.add(task);
+
+                    taskList.add(0, task); // Добавляем задачу в начало списка
                     return task;
                 } catch (Exception ex) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -376,7 +430,6 @@ public class TaskApp extends Application {
                     alert.setHeaderText("Некорректные данные");
                     alert.setContentText(ex.getMessage());
                     alert.showAndWait();
-                    return null;
                 }
             }
             return null;
@@ -384,7 +437,6 @@ public class TaskApp extends Application {
 
         dialog.showAndWait();
     }
-
 
     private VBox createSortableTaskList() {
         VBox container = new VBox(10);

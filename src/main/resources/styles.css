@@ -1,14 +1,45 @@
 .round-button {
     -fx-background-radius: 30px;
-    -fx-min-width: 60px;
-    -fx-min-height: 60px;
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
     -fx-max-width: 60px;
     -fx-max-height: 60px;
     -fx-background-color: #4CAF50;
     -fx-text-fill: white;
     -fx-font-size: 20px;
 }
-    
+
 .round-button:hover {
     -fx-background-color: #45a049;
+}
+
+.round-button-small {
+    -fx-background-radius: 30px;
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-max-width: 30px;
+    -fx-max-height: 30px;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.profile-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 5 20px;
+    -fx-border-radius: 5px;
+}
+
+.profile-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.list-cell {
+    -fx-padding: 10px;
+}
+
+.list-cell-done {
+    -fx-text-fill: gray;
 }
