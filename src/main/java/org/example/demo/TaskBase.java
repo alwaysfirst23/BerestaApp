@@ -3,14 +3,12 @@ package org.example.demo;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
 
 /**
  * В классе реализована логика работы добавления, удаления, редактирования задачи.
  * Обращаю внимание на то, что класс работает с базой данных
  */
-public class TaskList {
-    private LinkedList<Task> task_list;
+public class TaskBase {
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
@@ -23,12 +21,12 @@ public class TaskList {
      * @throws IncorrectTask если некорректно заполнены обязательные поля
      * @throws SQLException если нет связи с базой
      */
-    public void createTask(String title, String description, int priority, LocalDate date, String worker) throws IncorrectTask, SQLException {
+    public void createTask(String title, String description, int priority, LocalDate date, String worker, String project) throws IncorrectTask, SQLException {
         if (worker == null || worker.trim().isEmpty()) {
             worker = "Я";
         }
 
-        String sql = "INSERT INTO tasks(title, description, priority, deadline, worker) VALUES(?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tasks(title, description, priority, deadline, worker, project) VALUES(?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnector.taskConnect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -37,6 +35,7 @@ public class TaskList {
             pstmt.setInt(3, priority);
             pstmt.setString(4, date != null ? date.format(DateTimeFormatter.ISO_LOCAL_DATE) : null);
             pstmt.setString(5, worker);
+            pstmt.setString(6, project);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Ошибка создания задачи: " + e.getMessage());
@@ -68,8 +67,9 @@ public class TaskList {
      * @param deadline новый дедлайн
      * @param worker новый исполнитель
      */
-    public void editTask(int index, String title, String description, int priority, LocalDate deadline, String worker) {
-        String sql = "UPDATE tasks SET title = ?, description = ?, priority = ?, deadline = ?, worker = ? WHERE id = ?";
+    public void editTask(int index, String title, String description, int priority, LocalDate deadline, String worker, String project, boolean isDone) {
+        String sql = "UPDATE tasks SET title=?, description=?, priority=?, deadline=?, "
+                + "worker=?, project=?, is_done=? WHERE id=?";
 
         try (Connection conn = DatabaseConnector.taskConnect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -120,5 +120,16 @@ public class TaskList {
         }
 
         return sb.toString().isEmpty() ? "Список задач пуст" : sb.toString();
+    }
+
+    public void updateTaskStatus(int taskId, boolean isDone) throws SQLException {
+        String sql = "UPDATE tasks SET is_done = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnector.taskConnect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, isDone ? 1 : 0);
+            pstmt.setInt(2, taskId);
+            pstmt.executeUpdate();
+        }
     }
 }

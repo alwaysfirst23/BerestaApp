@@ -9,11 +9,5 @@ import java.time.LocalDate;
 
 public class Test {
     public static void main(String[] args) {
-        AuthService authService = new AuthService();
-        String login = "login";
-        String password = "password";
-        authService.register(login, password);
-
-        authService.login(login, password);
     }
 }

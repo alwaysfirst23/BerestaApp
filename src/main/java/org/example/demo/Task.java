@@ -18,6 +18,9 @@ public class Task {
     private String worker; // Исполнитель
     @Setter
     private boolean done;
+    @Setter
+    @Getter
+    private String project;
 
     public Task(String title, String description, int priority, LocalDate deadline, String worker) throws IncorrectTask {
         if (title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty()) {
@@ -77,8 +80,8 @@ public class Task {
      */
     public String whichPriority(int priority){
         return switch (priority) {
-            case 1 -> "Вообще не срочно";
-            case 2 -> "Не особо срочно";
+            case 1 -> "Не срочно";
+            case 2 -> "Средне";
             case 3 -> "Срочно";
             case 4 -> "Очень срочно!";
             default -> "ERROR";
