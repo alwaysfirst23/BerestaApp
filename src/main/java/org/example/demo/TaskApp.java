@@ -1,6 +1,7 @@
 package org.example.demo;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -72,6 +73,7 @@ public class TaskApp extends Application {
                                     LocalDate.parse(rs.getString("deadline")) : null,
                             rs.getString("worker")
                     );
+                    task.setId(rs.getInt("id"));
                     task.setDone(rs.getInt("is_done") == 1);
                     task.setProject(rs.getString("project"));
 
@@ -456,29 +458,25 @@ public class TaskApp extends Application {
         TextField descriptionField = new TextField(task.getDescription());
         descriptionField.setPromptText("Описание");
 
-        ChoiceBox<String> priorityBox = new ChoiceBox<>();
-        priorityBox.getItems().addAll(
-                "1 - Не срочно",
-                "2 - Средне",
+        ChoiceBox<String> priorityBox = new ChoiceBox<>(FXCollections.observableArrayList(
+                "1 - Вообще не срочно",
+                "2 - Не особо срочно",
                 "3 - Срочно",
                 "4 - Очень срочно!"
-        );
+        ));
         priorityBox.getSelectionModel().select(task.getPriority() - 1);
 
         DatePicker deadlinePicker = new DatePicker(task.getDeadline());
-
         TextField workerField = new TextField(task.getWorker());
-        workerField.setPromptText("Исполнитель");
 
-        // Добавляем выбор проекта
         ComboBox<String> projectCombo = new ComboBox<>(projectTitles);
-        projectCombo.setValue(task.getProject()); // Устанавливаем текущий проект задачи
+        projectCombo.setValue(task.getProject());
 
-        // Создаем layout для формы
+        // Размещаем элементы в GridPane
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 10, 10, 10));
+        grid.setPadding(new Insets(20));
 
         grid.add(new Label("Заголовок:"), 0, 0);
         grid.add(titleField, 1, 0);
@@ -493,73 +491,92 @@ public class TaskApp extends Application {
         grid.add(new Label("Проект:"), 0, 5);
         grid.add(projectCombo, 1, 5);
 
-        // Устанавливаем содержимое диалога
         dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Добавляем кнопки
-        ButtonType saveButtonType = new ButtonType("Сохранить", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        // Обработчик результата
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
+        // Обработка результата
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
                 try {
-                    // Валидация полей
-                    if (titleField.getText().trim().isEmpty()) {
-                        throw new IllegalArgumentException("Заголовок не может быть пустым");
-                    }
-                    if (descriptionField.getText().trim().isEmpty()) {
-                        throw new IllegalArgumentException("Описание не может быть пустым");
+                    // Валидация данных
+                    if (titleField.getText().trim().isEmpty() || descriptionField.getText().trim().isEmpty()) {
+                        throw new IllegalArgumentException("Все поля должны быть заполнены");
                     }
 
                     LocalDate deadline = deadlinePicker.getValue();
                     if (deadline == null) {
                         throw new IllegalArgumentException("Укажите дедлайн");
                     }
-                    if (deadline.isBefore(LocalDate.now())) {
-                        throw new IllegalArgumentException("Дедлайн не может быть в прошлом");
-                    }
 
-                    String selectedProject = projectCombo.getValue();
-                    if (selectedProject == null || selectedProject.trim().isEmpty()) {
-                        throw new IllegalArgumentException("Необходимо выбрать проект");
-                    }
-
-                    // Получаем приоритет
                     int priority = Integer.parseInt(priorityBox.getValue().split(" - ")[0]);
+                    String project = projectCombo.getValue();
 
                     // Обновляем задачу в базе данных
-                    taskBase.editTask(
-                            getTaskId(task),
+                    boolean updated = taskBase.editTask(
+                            task.getId(),  // Используем ID из объекта
                             titleField.getText(),
                             descriptionField.getText(),
                             priority,
                             deadline,
                             workerField.getText(),
-                            selectedProject,
+                            project,
                             task.isDone()
                     );
 
-                    // Обновляем локальную копию задачи
-                    task.setTitle(titleField.getText());
-                    task.setDescription(descriptionField.getText());
-                    task.setPriority(priority);
-                    task.setDeadline(deadline);
-                    task.setWorker(workerField.getText());
-                    task.setProject(selectedProject);
+                    if (!updated) {
+                        throw new RuntimeException("Не удалось обновить задачу в БД");
+                    }
 
-                    // Перезагружаем задачи из базы
-                    loadTasksFromDatabase();
+                    // Обновляем UI
+//                    Platform.runLater(() -> {
+//                        task.setTitle(titleField.getText());
+//                        task.setDescription(descriptionField.getText());
+//                        task.setPriority(priority);
+//                        task.setDeadline(deadline);
+//                        task.setWorker(workerField.getText());
+//                        task.setProject(project);
+//
+//                        // Обновляем ListView
+//                        observableList.setAll(allTasks);
+//                    });
+                    // Находим задачу в allTasks по ID (предполагая, что Task.equals() сравнивает ID)
+                    Task taskToUpdate = allTasks.stream()
+                            .filter(t -> t.getId() == task.getId())
+                            .findFirst()
+                            .orElse(null);
+
+                    if (taskToUpdate != null) {
+                        // Обновляем поля
+                        taskToUpdate.setTitle(titleField.getText());
+                        taskToUpdate.setDescription(descriptionField.getText());
+                        taskToUpdate.setPriority(priority);
+                        taskToUpdate.setDeadline(deadline);
+                        taskToUpdate.setWorker(workerField.getText());
+                        taskToUpdate.setProject(project);
+                    }
+
+                    // Обновляем tasksForMyTasksTab (если нужно)
+                    Task taskInMyTasks = tasksForMyTasksTab.stream()
+                            .filter(t -> t.getId() == task.getId())
+                            .findFirst()
+                            .orElse(null);
+
+                    if (taskInMyTasks != null) {
+                        taskInMyTasks.setTitle(titleField.getText());
+                        taskInMyTasks.setDescription(descriptionField.getText());
+                        taskInMyTasks.setPriority(priority);
+                        taskInMyTasks.setDeadline(deadline);
+                        taskInMyTasks.setWorker(workerField.getText());
+                        taskInMyTasks.setProject(project);
+                    }
 
                     return task;
                 } catch (Exception ex) {
-                    // Показываем ошибку пользователю
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Ошибка");
-                    alert.setHeaderText("Некорректные данные");
+                    alert.setHeaderText("Ошибка при редактировании");
                     alert.setContentText(ex.getMessage());
                     alert.showAndWait();
-                    return null;
                 }
             }
             return null;
@@ -569,23 +586,10 @@ public class TaskApp extends Application {
     }
 
     private int getTaskId(Task task) {
-        // Здесь должна быть логика получения ID задачи из базы данных
-        // Это упрощенная версия - в реальном приложении нужно реализовать правильный поиск ID
-        try {
-            String sql = "SELECT id FROM tasks WHERE title = ? AND description = ? LIMIT 1";
-            try (Connection conn = DatabaseConnector.taskConnect();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, task.getTitle());
-                pstmt.setString(2, task.getDescription());
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Ошибка получения ID задачи: " + e.getMessage());
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null");
         }
-        return -1;
+        return task.getId();  // Просто берем ID из объекта
     }
 
 

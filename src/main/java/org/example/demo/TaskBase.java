@@ -60,14 +60,16 @@ public class TaskBase {
 
     /**
      * Редактирует задачу по индексу, обновляя запись в базе
-     * @param index номер задачи
-     * @param title новый заголовок
+     *
+     * @param index       номер задачи
+     * @param title       новый заголовок
      * @param description новое описание
-     * @param priority новый приоритет
-     * @param deadline новый дедлайн
-     * @param worker новый исполнитель
+     * @param priority    новый приоритет
+     * @param deadline    новый дедлайн
+     * @param worker      новый исполнитель
+     * @return
      */
-    public void editTask(int index, String title, String description, int priority, LocalDate deadline, String worker, String project, boolean isDone) {
+    public boolean editTask(int index, String title, String description, int priority, LocalDate deadline, String worker, String project, boolean isDone) {
         String sql = "UPDATE tasks SET title=?, description=?, priority=?, deadline=?, "
                 + "worker=?, project=?, is_done=? WHERE id=?";
 
@@ -83,6 +85,7 @@ public class TaskBase {
         } catch (SQLException e) {
             System.err.println("Ошибка редактирования задачи: " + e.getMessage());
         }
+        return isDone;
     }
 
     /**

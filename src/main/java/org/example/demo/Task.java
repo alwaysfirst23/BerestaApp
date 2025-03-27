@@ -21,6 +21,9 @@ public class Task {
     @Setter
     @Getter
     private String project;
+    @Setter
+    @Getter
+    private int id;
 
     public Task(String title, String description, int priority, LocalDate deadline, String worker) throws IncorrectTask {
         if (title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty()) {
