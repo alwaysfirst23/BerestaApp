@@ -17,7 +17,10 @@ import javafx.stage.Stage;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.Optional;
+
 import javafx.geometry.Pos;
+import javafx.util.Pair;
 
 
 public class TaskApp extends Application {
@@ -25,9 +28,17 @@ public class TaskApp extends Application {
     private ObservableList<Task> tasksForMyTasksTab = FXCollections.observableArrayList(); // Для вкладки "Мои задачи"
     private ObservableList<String> projectTitles = FXCollections.observableArrayList(); // Названия проектов
     private TaskBase taskBase = new TaskBase();
+    private AuthService authService = new AuthService();
 
     @Override
     public void start(Stage primaryStage) {
+
+        // Показываем окно авторизации
+        if (!showAuthDialog()) {
+            Platform.exit();
+            return;
+        }
+
         // Загружаем задачи из базы данных при старте
         loadTasksFromDatabase();
         // Добавляем хотя бы один проект по умолчанию, если их нет
@@ -49,9 +60,95 @@ public class TaskApp extends Application {
 
         Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
-        primaryStage.setTitle("Task Manager");
+        primaryStage.setTitle("Beresta");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private boolean showAuthDialog() {
+        AuthDialog authDialog = new AuthDialog(authService);
+
+        while (true) {
+            Optional<Pair<String, String>> result = authDialog.showAndWait();
+
+            if (result.isPresent()) {
+                try {
+                    if (authService.login(result.get().getKey(), result.get().getValue())) {
+                        return true;
+                    }
+
+                    // Неверные учетные данные
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Ошибка авторизации");
+                    errorAlert.setHeaderText(null);
+                    errorAlert.setContentText("Неверный логин или пароль");
+                    errorAlert.showAndWait();
+
+                } catch (Exception e) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Ошибка регистрации");
+                    errorAlert.setHeaderText(null);
+                    errorAlert.setContentText(e.getMessage());
+                    errorAlert.showAndWait();
+
+                    // Рекурсивно показываем снова при ошибке
+                    showRegisterDialog();
+                }
+            } else {
+                // Пользователь нажал Cancel
+                return false;
+            }
+
+            // Предложение зарегистрироваться
+            Alert choiceDialog = new Alert(Alert.AlertType.CONFIRMATION);
+            choiceDialog.setTitle("Попробовать снова?");
+            choiceDialog.setHeaderText("Не удалось войти");
+            choiceDialog.setContentText("Хотите зарегистрироваться или попробовать снова?");
+
+            ButtonType registerButton = new ButtonType("Регистрация");
+            ButtonType retryButton = new ButtonType("Повторить", ButtonBar.ButtonData.OK_DONE);
+            choiceDialog.getButtonTypes().setAll(registerButton, retryButton, ButtonType.CANCEL);
+
+            Optional<ButtonType> choice = choiceDialog.showAndWait();
+
+            if (choice.isPresent()) {
+                if (choice.get() == registerButton) {
+                    showRegisterDialog();
+                } else if (choice.get() == ButtonType.CANCEL) {
+                    return false;
+                }
+                // Для retryButton просто продолжаем цикл
+            }
+        }
+    }
+
+    private void showRegisterDialog() {
+        AuthDialog registerDialog = new AuthDialog(authService);
+        registerDialog.setRegisterMode(true);
+
+        Optional<Pair<String, String>> result = registerDialog.showAndWait();
+
+        if (result.isPresent()) {
+            try {
+                authService.register(result.get().getKey(), result.get().getValue());
+
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                successAlert.setTitle("Успешная регистрация");
+                successAlert.setHeaderText(null);
+                successAlert.setContentText("Аккаунт успешно создан! Теперь вы можете войти.");
+                successAlert.showAndWait();
+
+            } catch (Exception e) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Ошибка регистрации");
+                errorAlert.setHeaderText(null);
+                errorAlert.setContentText(e.getMessage());
+                errorAlert.showAndWait();
+
+                // Рекурсивно показываем снова при ошибке
+                showRegisterDialog();
+            }
+        }
     }
 
     private void loadTasksFromDatabase() {
