@@ -69,7 +69,12 @@ public class TaskBase {
      * @param worker      новый исполнитель
      * @return
      */
-    public boolean editTask(int index, String title, String description, int priority, LocalDate deadline, String worker, String project, boolean isDone) {
+    public boolean editTask(int index, String title, String description, int priority,
+                            LocalDate deadline, String worker, String project, boolean isDone) {
+        if (worker == null || worker.trim().isEmpty()) {
+            worker = "Я";
+        }
+
         String sql = "UPDATE tasks SET title=?, description=?, priority=?, deadline=?, "
                 + "worker=?, project=?, is_done=? WHERE id=?";
 
@@ -80,12 +85,16 @@ public class TaskBase {
             pstmt.setInt(3, priority);
             pstmt.setString(4, deadline != null ? deadline.format(DateTimeFormatter.ISO_LOCAL_DATE) : null);
             pstmt.setString(5, worker);
-            pstmt.setInt(6, index);
-            pstmt.executeUpdate();
+            pstmt.setString(6, project);
+            pstmt.setBoolean(7, isDone);
+            pstmt.setInt(8, index);  // id задачи
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;  // true, если обновление успешно
         } catch (SQLException e) {
             System.err.println("Ошибка редактирования задачи: " + e.getMessage());
+            return false;
         }
-        return isDone;
     }
 
     /**
