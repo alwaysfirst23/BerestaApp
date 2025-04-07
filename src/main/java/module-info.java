@@ -28,7 +28,19 @@ module org.example.demo {
     requires static lombok;
     requires spring.web;
     requires spring.boot.autoconfigure;
+    requires javafx.graphics;
 
-    opens org.example.demo to javafx.fxml, org.hibernate.orm.core, spring.core;
-    exports org.example.demo;
+    exports org.example.demo.domain;
+    opens org.example.demo.domain to javafx.fxml, org.hibernate.orm.core, spring.core;
+    exports org.example.demo.infrastructure;
+    opens org.example.demo.infrastructure to javafx.fxml, org.hibernate.orm.core, spring.core;
+    exports org.example.demo.domain.exceptions;
+    opens org.example.demo.domain.exceptions to javafx.fxml, org.hibernate.orm.core, spring.core;
+    exports org.example.demo.presentation.auth;
+    opens org.example.demo.presentation.auth to javafx.fxml, org.hibernate.orm.core, spring.core, javafx.graphics;
+    exports org.example.demo.services;
+    opens org.example.demo.services to javafx.fxml, org.hibernate.orm.core, spring.core;
+    opens org.example.demo to javafx.graphics, javafx.fxml, org.hibernate.orm.core, spring.core;
+    opens org.example.demo.presentation.main to javafx.fxml, javafx.graphics;
+    exports org.example.demo.presentation.main;
 }

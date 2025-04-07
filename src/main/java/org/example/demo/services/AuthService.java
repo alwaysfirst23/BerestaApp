@@ -1,5 +1,7 @@
-package org.example.demo;
+package org.example.demo.services;
 
+import org.example.demo.domain.User;
+import org.example.demo.infrastructure.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**

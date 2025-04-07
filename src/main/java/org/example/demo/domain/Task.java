@@ -1,7 +1,8 @@
-package org.example.demo;
+package org.example.demo.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.demo.domain.exceptions.IncorrectTask;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
