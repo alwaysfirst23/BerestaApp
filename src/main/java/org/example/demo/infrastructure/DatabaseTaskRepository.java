@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import org.example.demo.domain.Task;
 
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class DatabaseTaskRepository implements TaskRepository{
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getInt("priority"),
-                        rs.getDate("deadline") != null ? rs.getDate("deadline").toLocalDate() : null,
+                        parseDate(rs.getString("deadline")), // Используем строковый парсинг,
                         rs.getString("worker")
                 );
                 task.setId(rs.getInt("id"));
@@ -64,9 +66,11 @@ public class DatabaseTaskRepository implements TaskRepository{
             pstmt.setBoolean(7, task.isDone());
             pstmt.executeUpdate();
 
-            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+            // Получаем ID через последний вставленный rowid (специфика SQLite)
+            try (Statement stmt = connection.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
                 if (rs.next()) {
-                    task.setId(rs.getInt(1)); // Устанавливаем сгенерированный ID
+                    task.setId(rs.getInt(1));
                 }
             }
         } catch (SQLException e) {
@@ -179,5 +183,21 @@ public class DatabaseTaskRepository implements TaskRepository{
         } catch (SQLException e) {
             throw new RuntimeException("Не удалось обновить статус", e);
         }
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) {
+            return null;
+        }
+
+        // Обработка timestamp (если приходит число)
+        if (dateStr.matches("\\d+")) {
+            return Instant.ofEpochMilli(Long.parseLong(dateStr))
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+
+        // Обработка строки в формате YYYY-MM-DD
+        return LocalDate.parse(dateStr);
     }
 }

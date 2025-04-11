@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.geometry.Pos?>
-
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.Label?>
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.MainController">
+
+<BorderPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.MainController">
 
     <top>
-        <HBox fx:id="topPanel" spacing="10" alignment="CENTER_LEFT"  >
+        <HBox fx:id="topPanel" alignment="CENTER_LEFT" spacing="10">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
@@ -27,21 +20,30 @@
     </top>
 
     <center>
-        <TabPane fx:id="tabPane">
+        <TabPane fx:id="tabPane" prefHeight="505.0" prefWidth="700.0">
             <tabs>
-                <Tab text="Проекты" closable="false">
+                <Tab closable="false" text="Проекты">
+                <content>
+                    <ScrollPane fitToWidth="true" fitToHeight="true">
+                        <FlowPane fx:id="projectsFlowPane"
+                                  hgap="20"
+                                  vgap="10"
+                                  prefWrapLength="1000">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </FlowPane>
+                    </ScrollPane>
+                </content>
+                </Tab>
+                <Tab closable="false" text="Мои задачи">
                     <content>
-                        <fx:include source="task_container.fxml"/>
+
                     </content>
                 </Tab>
-                <Tab text="Мои задачи" closable="false">
+                <Tab closable="false" text="Статистика">
                     <content>
-                        <fx:include source="sortable_task_list.fxml"/>
-                    </content>
-                </Tab>
-                <Tab text="Статистика" closable="false">
-                    <content>
-                        <Label text="Содержимое третьей вкладки"/>
+                        <Label text="Содержимое третьей вкладки" />
                     </content>
                 </Tab>
             </tabs>
@@ -53,7 +55,7 @@
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
-            <Button fx:id="addWindowButton" text="+" onAction="#showCreateWindowDialog"/>
+            <Button fx:id="addWindowButton" onAction="#showCreateWindowDialog" text="+" />
         </StackPane>
     </bottom>
 

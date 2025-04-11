@@ -79,11 +79,10 @@ public class Task {
 
     /**
      * Возвращает текстовую расшифровку числового приоритета
-     * @param priority приоритет
      * @return текст
      */
-    public String whichPriority(int priority){
-        return switch (priority) {
+    public String whichPriority(){
+        return switch (this.priority) {
             case 1 -> "Не срочно";
             case 2 -> "Средне";
             case 3 -> "Срочно";
