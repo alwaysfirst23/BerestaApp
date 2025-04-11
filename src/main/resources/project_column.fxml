@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.demo.presentation.main.ProjectColumnController"
+      spacing="10"
+      minWidth="250"
+      prefWidth="250"
+      maxWidth="250"
+      style="-fx-border-color: #000000; -fx-border-width: 1; -fx-border-radius: 3;">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label fx:id="projectNameLabel" style="-fx-font-weight: bold;"/>
+    <VBox fx:id="tasksContainer" spacing="8" minHeight="100"/>
+</VBox>

@@ -23,18 +23,17 @@
         <TabPane fx:id="tabPane" prefHeight="505.0" prefWidth="700.0">
             <tabs>
                 <Tab closable="false" text="Проекты">
-                <content>
-                    <ScrollPane fitToWidth="true" fitToHeight="true">
-                        <FlowPane fx:id="projectsFlowPane"
-                                  hgap="20"
-                                  vgap="10"
-                                  prefWrapLength="1000">
-                            <padding>
-                                <Insets top="10" right="10" bottom="10" left="10"/>
-                            </padding>
-                        </FlowPane>
-                    </ScrollPane>
-                </content>
+                    <content>
+                        <ScrollPane fitToWidth="true" fitToHeight="true">
+                            <FlowPane fx:id="projectsFlowPane"
+                                      hgap="20"
+                                      vgap="15">
+                                <padding>
+                                    <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                                </padding>
+                            </FlowPane>
+                        </ScrollPane>
+                    </content>
                 </Tab>
                 <Tab closable="false" text="Мои задачи">
                     <content>

@@ -1,6 +1,7 @@
 package org.example.demo.presentation.main;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -10,6 +11,7 @@ import org.example.demo.domain.Task;
 import org.example.demo.infrastructure.DatabaseConnector;
 import org.example.demo.infrastructure.DatabaseTaskRepository;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,7 +43,7 @@ public class MainController {
     private FlowPane projectsFlowPane;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         setupTopPanel();
         setupTabPane();
         setupRoundButton();
@@ -49,18 +51,26 @@ public class MainController {
         loadTasksByProjects(); // Загружаем задачи при старте
     }
 
-    private void loadTasksByProjects() {
+    private void loadTasksByProjects() throws IOException {
         DatabaseTaskRepository repository = new DatabaseTaskRepository(DatabaseConnector.taskConnect());
         List<Task> tasks = repository.findAll();
 
-        // Группируем задачи по проектам
         Map<String, List<Task>> tasksByProject = tasks.stream()
                 .collect(Collectors.groupingBy(Task::getProject));
 
-        // Создаем колонку для каждого проекта
         tasksByProject.forEach((projectName, projectTasks) -> {
-            VBox projectColumn = createProjectColumn(projectName, projectTasks);
-            projectsFlowPane.getChildren().add(projectColumn);
+            try {
+                // Создаем новый FXMLLoader для каждой колонки
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/project_column.fxml"));
+                VBox projectColumn = loader.load();
+                ProjectColumnController controller = loader.getController();
+                controller.setProjectName(projectName);
+
+                projectTasks.forEach(controller::addTask);
+                projectsFlowPane.getChildren().add(projectColumn);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
