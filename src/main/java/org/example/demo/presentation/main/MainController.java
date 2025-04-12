@@ -51,68 +51,33 @@ public class MainController {
         loadTasksByProjects(); // Загружаем задачи при старте
     }
 
-    private void loadTasksByProjects() throws IOException {
-        DatabaseTaskRepository repository = new DatabaseTaskRepository(DatabaseConnector.taskConnect());
-        List<Task> tasks = repository.findAll();
+    private void loadTasksByProjects() {
+        try {
+            DatabaseTaskRepository repository = new DatabaseTaskRepository(DatabaseConnector.taskConnect());
+            List<Task> tasks = repository.findAll();
 
-        Map<String, List<Task>> tasksByProject = tasks.stream()
-                .collect(Collectors.groupingBy(Task::getProject));
+            Map<String, List<Task>> tasksByProject = tasks.stream()
+                    .collect(Collectors.groupingBy(Task::getProject));
 
-        tasksByProject.forEach((projectName, projectTasks) -> {
-            try {
-                // Создаем новый FXMLLoader для каждой колонки
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/project_column.fxml"));
-                VBox projectColumn = loader.load();
-                ProjectColumnController controller = loader.getController();
-                controller.setProjectName(projectName);
+            tasksByProject.forEach((projectName, projectTasks) -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                            "/project_column.fxml"
+                    ));
+                    VBox projectColumn = loader.load();
+                    ProjectColumnController controller = loader.getController();
+                    controller.setProjectName(projectName);
+                    controller.setTaskRepository(repository); // Передаем репозиторий
 
-                projectTasks.forEach(controller::addTask);
-                projectsFlowPane.getChildren().add(projectColumn);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    private VBox createProjectColumn(String projectName, List<Task> tasks) {
-        VBox column = new VBox(10); // Отступ между задачами 10px
-        column.setPadding(new Insets(10));
-        column.setStyle("-fx-background-color: #f0f0f0; -fx-border-radius: 5; -fx-background-radius: 5;");
-
-        // Заголовок колонки (название проекта)
-        Label projectLabel = new Label(projectName);
-        projectLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
-        column.getChildren().add(projectLabel);
-
-        // Добавляем задачи в колонку
-        tasks.forEach(task -> {
-            Node taskCard = createTaskCard(task);
-            column.getChildren().add(taskCard);
-        });
-
-        return column;
-    }
-
-    private Node createTaskCard(Task task) {
-        VBox card = new VBox(5);
-        card.setPadding(new Insets(10));
-
-        Label titleLabel = new Label("Название: " + task.getTitle());
-        Label descLabel = new Label("Описание: " + task.getDescription());
-        Label deadlineLabel = new Label("Дедлайн: " + task.getDeadline());
-        Label workerLabel = new Label("Исполнитель: " + task.getWorker());
-        Label priorityLabel = new Label("Приоритет: " + task.whichPriority());
-        Label statusLabel = new Label("Статус: " + (task.isDone() ? "Выполнено" : "В работе"));
-
-        card.getChildren().addAll(
-                titleLabel,
-                descLabel,
-                deadlineLabel,
-                workerLabel,
-                priorityLabel,
-                statusLabel
-        );
-        return card;
+                    projectTasks.forEach(controller::addTask);
+                    projectsFlowPane.getChildren().add(projectColumn);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupTopPanel() {

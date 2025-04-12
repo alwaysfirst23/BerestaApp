@@ -1,38 +1,69 @@
 package org.example.demo.presentation.main;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import lombok.Setter;
 import org.example.demo.domain.Task;
+import org.example.demo.domain.exceptions.IncorrectTask;
+import org.example.demo.infrastructure.DatabaseTaskRepository;
+import org.example.demo.presentation.TaskDialog;
+
+import java.io.IOException;
+import java.util.Optional;
 
 public class ProjectColumnController {
     @FXML private VBox projectColumn;
     @FXML private Label projectNameLabel;
     @FXML private VBox tasksContainer;
+    @FXML private Button addTaskButton;
+
+    private String projectName;
+    @Setter
+    private DatabaseTaskRepository taskRepository;
 
     public void setProjectName(String name) {
+        this.projectName = name;
         projectNameLabel.setText(name);
     }
 
-    public void addTask(Task task) {
-        tasksContainer.getChildren().add(createTaskCard(task));
+    @FXML
+    public void handleAddTask() {
+        TaskDialog dialog = new TaskDialog(projectName);
+        Optional<Task> result = dialog.showAndWait();
+
+        result.ifPresent(task -> {
+            try {
+                // Сохраняем в БД
+                taskRepository.save(task);
+                // Добавляем в UI
+                addTask(task);
+            } catch (Exception e) {
+                showErrorAlert("Ошибка сохранения задачи", e.getMessage());
+            }
+        });
     }
 
-    private Node createTaskCard(Task task) {
-        VBox card = new VBox(5);
-        card.setPadding(new Insets(10));
+    public void addTask(Task task) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/task_card.fxml"
+            ));
+            VBox taskCard = loader.load();
+            TaskCardController controller = loader.getController();
+            controller.setTask(task);
+            tasksContainer.getChildren().add(taskCard);
+        } catch (IOException e) {
+            showErrorAlert("Ошибка загрузки карточки", e.getMessage());
+        }
+    }
 
-        card.getChildren().addAll(
-                new Label("Название: " + task.getTitle()),
-                new Label("Описание: " + task.getDescription()),
-                new Label("Дедлайн: " + task.getDeadline()),
-                new Label("Исполнитель: " + task.getWorker()),
-                new Label("Приоритет: " + task.getPriority()),
-                new Label("Статус: " + (task.isDone() ? "Выполнено" : "В работе"))
-        );
-
-        return card;
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
