@@ -3,9 +3,8 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<BorderPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.MainController">
+<BorderPane prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.MainController">
 
     <top>
         <HBox fx:id="topPanel" alignment="CENTER_LEFT" spacing="10">
@@ -20,16 +19,14 @@
     </top>
 
     <center>
-        <TabPane fx:id="tabPane" prefHeight="505.0" prefWidth="700.0">
+        <TabPane fx:id="tabPane" prefHeight="505.0" prefWidth="800.0">
             <tabs>
                 <Tab closable="false" text="Проекты">
                     <content>
-                        <ScrollPane fitToWidth="true" fitToHeight="true">
-                            <FlowPane fx:id="projectsFlowPane"
-                                      hgap="20"
-                                      vgap="15">
+                        <ScrollPane fitToHeight="true" fitToWidth="true">
+                            <FlowPane fx:id="projectsFlowPane" hgap="20" vgap="15">
                                 <padding>
-                                    <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                 </padding>
                             </FlowPane>
                         </ScrollPane>

@@ -14,6 +14,7 @@ import org.example.demo.infrastructure.DatabaseTaskRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MainController {
@@ -41,6 +42,9 @@ public class MainController {
 
     @FXML
     private FlowPane projectsFlowPane;
+    private DatabaseTaskRepository taskRepository;
+
+
 
     @FXML
     public void initialize() throws IOException {
@@ -49,6 +53,7 @@ public class MainController {
         setupRoundButton();
         setupMenuButton(menuButton);
         loadTasksByProjects(); // Загружаем задачи при старте
+        this.taskRepository = new DatabaseTaskRepository(DatabaseConnector.taskConnect());
     }
 
     private void loadTasksByProjects() {
@@ -91,8 +96,43 @@ public class MainController {
     }
 
     private void setupRoundButton() {
-        addWindowButton.getStyleClass().add("round-button");
+        addWindowButton.setOnAction(event -> showCreateWindowDialog());
     }
+
+//    private void addNewProjectColumn() {
+//        try {
+//            // Диалог для ввода названия проекта
+//            TextInputDialog dialog = new TextInputDialog("Новый проект");
+//            dialog.setTitle("Создание проекта");
+//            dialog.setHeaderText("Введите название нового проекта");
+//            dialog.setContentText("Название:");
+//
+//            Optional<String> result = dialog.showAndWait();
+//            result.ifPresent(projectName -> {
+//                if (!projectName.trim().isEmpty()) {
+//                    createProjectColumn(projectName);
+//                }
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void createProjectColumn(String projectName) {
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+//                    "/project_column.fxml"
+//            ));
+//            VBox projectColumn = loader.load();
+//            ProjectColumnController controller = loader.getController();
+//            controller.setProjectName(projectName);
+//            controller.setTaskRepository(taskRepository);
+//
+//            projectsFlowPane.getChildren().add(projectColumn);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void showProfile() {
         // Логика просмотра профиля
@@ -121,9 +161,35 @@ public class MainController {
     }
 
     @FXML
-    private void showCreateWindowDialog() {
-        // Логика отображения диалога создания окна
-        System.out.println("Диалог создания окна...");
+    public void showCreateWindowDialog() {
+        TextInputDialog dialog = new TextInputDialog("Новый проект");
+        dialog.setTitle("Создание проекта");
+        dialog.setHeaderText("Введите название проекта");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(projectName -> {
+            if (!projectName.trim().isEmpty()) {
+                addProjectColumn(projectName);
+            }
+        });
+    }
+
+    private void addProjectColumn(String projectName) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/project_column.fxml"
+            ));
+            VBox newColumn = loader.load();
+            ProjectColumnController controller = loader.getController();
+
+            // Используем существующие методы контроллера
+            controller.setProjectName(projectName);
+            controller.setTaskRepository(taskRepository);
+
+            projectsFlowPane.getChildren().add(newColumn);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void changeTheme() {
