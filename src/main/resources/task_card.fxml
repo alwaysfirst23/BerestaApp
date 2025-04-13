@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Button?>
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.demo.presentation.main.TaskCardController"
@@ -20,4 +21,7 @@
     <Label fx:id="workerLabel"/>
     <Label fx:id="priorityLabel"/>
     <Label fx:id="statusLabel"/>
+    <Button fx:id="markAsDoneButton"
+            text="Отметить выполненной"
+            onAction="#handleMarkAsDone"/>
 </VBox>

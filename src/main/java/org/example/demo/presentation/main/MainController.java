@@ -99,40 +99,6 @@ public class MainController {
         addWindowButton.setOnAction(event -> showCreateWindowDialog());
     }
 
-//    private void addNewProjectColumn() {
-//        try {
-//            // Диалог для ввода названия проекта
-//            TextInputDialog dialog = new TextInputDialog("Новый проект");
-//            dialog.setTitle("Создание проекта");
-//            dialog.setHeaderText("Введите название нового проекта");
-//            dialog.setContentText("Название:");
-//
-//            Optional<String> result = dialog.showAndWait();
-//            result.ifPresent(projectName -> {
-//                if (!projectName.trim().isEmpty()) {
-//                    createProjectColumn(projectName);
-//                }
-//            });
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void createProjectColumn(String projectName) {
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-//                    "/project_column.fxml"
-//            ));
-//            VBox projectColumn = loader.load();
-//            ProjectColumnController controller = loader.getController();
-//            controller.setProjectName(projectName);
-//            controller.setTaskRepository(taskRepository);
-//
-//            projectsFlowPane.getChildren().add(projectColumn);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     private void showProfile() {
         // Логика просмотра профиля

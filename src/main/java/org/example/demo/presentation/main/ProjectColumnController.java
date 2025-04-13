@@ -1,5 +1,6 @@
 package org.example.demo.presentation.main;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -52,10 +53,25 @@ public class ProjectColumnController {
             ));
             VBox taskCard = loader.load();
             TaskCardController controller = loader.getController();
-            controller.setTask(task);
+
+            controller.setTask(task, () -> {
+                try {
+                    task.setDone(true);
+                    taskRepository.update(task);
+                } catch (Exception e) {
+                    Platform.runLater(() ->
+                            showErrorAlert("Ошибка обновления задачи", e.getMessage())
+                    );
+                }
+            });
+
+            // Добавляем карточку в контейнер
             tasksContainer.getChildren().add(taskCard);
+
         } catch (IOException e) {
+            // Обработка ошибки загрузки FXML
             showErrorAlert("Ошибка загрузки карточки", e.getMessage());
+            e.printStackTrace();
         }
     }
 
