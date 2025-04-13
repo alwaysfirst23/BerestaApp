@@ -7,18 +7,27 @@
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.demo.presentation.main.ProjectColumnController"
-      spacing="10"
+      styleClass="project-column"
+      stylesheets="@/styles.css"
       minWidth="250"
       prefWidth="250"
       maxWidth="250"
-      style="-fx-border-color: #000000; -fx-border-width: 1; -fx-border-radius: 3;">
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
+      spacing="10">
 
-    <Label fx:id="projectNameLabel" style="-fx-font-weight: bold;"/>
-    <VBox fx:id="tasksContainer" spacing="8" minHeight="100"/>
+    <Label fx:id="projectNameLabel" styleClass="project-title"/>
+
+    <!-- ScrollPane с динамической высотой -->
+    <ScrollPane fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="task-scroll-pane"
+                VBox.vgrow="ALWAYS">
+        <content>
+            <VBox fx:id="tasksContainer" spacing="8" styleClass="tasks-container"/>
+        </content>
+    </ScrollPane>
+
     <Button fx:id="addTaskButton" text="+"
             onAction="#handleAddTask"
-            style="-fx-background-radius: 15; -fx-min-width: 30; -fx-min-height: 30; -fx-font-weight: bold;"/>
+            styleClass="add-task-button"/>
 </VBox>

@@ -1,5 +1,6 @@
 package org.example.demo.presentation.main;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -40,8 +41,7 @@ public class MainController {
     @FXML
     private Button addWindowButton;
 
-    @FXML
-    private FlowPane projectsFlowPane;
+    @FXML private HBox projectsContainer; // Новое имя для HBox
     private DatabaseTaskRepository taskRepository;
 
 
@@ -52,36 +52,58 @@ public class MainController {
         setupTabPane();
         setupRoundButton();
         setupMenuButton(menuButton);
-        loadTasksByProjects(); // Загружаем задачи при старте
         this.taskRepository = new DatabaseTaskRepository(DatabaseConnector.taskConnect());
+        // Переносим загрузку задач после полной инициализации
+        Platform.runLater(() -> {
+            loadTasksByProjects();
+        });
     }
 
     private void loadTasksByProjects() {
         try {
-            DatabaseTaskRepository repository = new DatabaseTaskRepository(DatabaseConnector.taskConnect());
-            List<Task> tasks = repository.findAll();
+            // Проверка инициализации
+            if (projectsContainer == null) {
+                System.err.println("Error: projectsContainer is not initialized!");
+                return;
+            }
 
+            // Очищаем существующие колонки
+            projectsContainer.getChildren().clear();
+
+            // Загружаем задачи из репозитория
+            List<Task> tasks = taskRepository.findAll();
             Map<String, List<Task>> tasksByProject = tasks.stream()
                     .collect(Collectors.groupingBy(Task::getProject));
 
+            // Создаем колонки для каждого проекта
             tasksByProject.forEach((projectName, projectTasks) -> {
                 try {
+                    // Создаем новую колонку
                     FXMLLoader loader = new FXMLLoader(getClass().getResource(
                             "/project_column.fxml"
                     ));
                     VBox projectColumn = loader.load();
                     ProjectColumnController controller = loader.getController();
-                    controller.setProjectName(projectName);
-                    controller.setTaskRepository(repository); // Передаем репозиторий
 
+                    // Настраиваем колонку
+                    controller.setProjectName(projectName);
+                    controller.setTaskRepository(taskRepository);
+
+                    // Добавляем задачи в колонку
                     projectTasks.forEach(controller::addTask);
-                    projectsFlowPane.getChildren().add(projectColumn);
+
+                    // Добавляем колонку в контейнер
+                    projectsContainer.getChildren().add(projectColumn);
+
                 } catch (IOException e) {
                     e.printStackTrace();
+                    showAlert("Ошибка", "Не удалось загрузить колонку проекта: " + projectName);
                 }
             });
+
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert("Ошибка загрузки", "Не удалось загрузить задачи: " + e.getMessage());
         }
     }
 
@@ -142,21 +164,35 @@ public class MainController {
 
     private void addProjectColumn(String projectName) {
         try {
+            // Загрузка FXML колонки
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
                     "/project_column.fxml"
             ));
             VBox newColumn = loader.load();
             ProjectColumnController controller = loader.getController();
 
-            // Используем существующие методы контроллера
+            // Настройка поведения высоты
+            newColumn.setMaxHeight(Double.MAX_VALUE);
+            newColumn.minHeightProperty().bind(newColumn.prefHeightProperty());
+
+            // Инициализация колонки
             controller.setProjectName(projectName);
             controller.setTaskRepository(taskRepository);
 
-            projectsFlowPane.getChildren().add(newColumn);
+            // Добавление в контейнер
+            projectsContainer.getChildren().add(newColumn);
+
+            // Принудительное обновление layout
+            Platform.runLater(() -> {
+                projectsContainer.requestLayout();
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Ошибка", "Не удалось создать колонку проекта: " + e.getMessage());
         }
     }
+
 
     private void changeTheme() {
         // Логика смены темы
@@ -166,5 +202,12 @@ public class MainController {
     private void showTimeManagement() {
         // Логика отображения окна тайм-менеджмента
         System.out.println("Тайм-менеджмент...");
+    }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

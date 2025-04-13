@@ -12,6 +12,7 @@ import org.example.demo.infrastructure.DatabaseTaskRepository;
 import org.example.demo.presentation.TaskDialog;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class ProjectColumnController {
@@ -48,30 +49,24 @@ public class ProjectColumnController {
 
     public void addTask(Task task) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/task_card.fxml"
-            ));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/task_card.fxml"));
             VBox taskCard = loader.load();
             TaskCardController controller = loader.getController();
 
-            controller.setTask(task, () -> {
-                try {
-                    task.setDone(true);
-                    taskRepository.update(task);
-                } catch (Exception e) {
-                    Platform.runLater(() ->
-                            showErrorAlert("Ошибка обновления задачи", e.getMessage())
-                    );
-                }
-            });
+            controller.setTask(
+                    task,
+                    () -> { // onTaskDone
+                        taskRepository.update(task);
+                    },
+                    () -> { // onDeleteTask
+                        taskRepository.delete(task.getId());
+                        tasksContainer.getChildren().remove(taskCard);
+                    }
+            );
 
-            // Добавляем карточку в контейнер
             tasksContainer.getChildren().add(taskCard);
-
         } catch (IOException e) {
-            // Обработка ошибки загрузки FXML
-            showErrorAlert("Ошибка загрузки карточки", e.getMessage());
-            e.printStackTrace();
+            showErrorAlert("Ошибка загрузки", e.getMessage());
         }
     }
 
