@@ -20,14 +20,17 @@ public class TaskCardController {
     @FXML public Label statusLabel;
     @FXML private Button markAsDoneButton;
     private Task task;
-    private Runnable onTaskDone;
+    Runnable onTaskDone;
     @FXML private Button deleteButton;
-    private Runnable onDeleteTask;
+    Runnable onDeleteTask;
+    @FXML private Button editButton;
+    Runnable onEditTask;
 
-    public void setTask(Task task, Runnable onTaskDone, Runnable onDeleteTask) {
+    public void setTask(Task task, Runnable onTaskDone, Runnable onDeleteTask, Runnable onEditTask) {
         this.task = task;
         this.onTaskDone = onTaskDone;
         this.onDeleteTask = onDeleteTask;
+        this.onEditTask = onEditTask;
         updateUI();
     }
 
@@ -46,7 +49,7 @@ public class TaskCardController {
         }
     }
 
-    private void updateUI() {
+    void updateUI() {
         titleLabel.setText(task.getTitle());
         descriptionLabel.setText(task.getDescription());
         deadlineLabel.setText("Дедлайн: " + task.getDeadline());
@@ -73,6 +76,14 @@ public class TaskCardController {
             if (onTaskDone != null) {
                 onTaskDone.run();
             }
+        }
+    }
+
+    @FXML
+    private void handleEdit() {
+        // Логика редактирования задачи
+        if (onEditTask != null) {
+            onEditTask.run();
         }
     }
 }

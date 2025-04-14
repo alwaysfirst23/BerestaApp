@@ -56,17 +56,54 @@ public class ProjectColumnController {
             controller.setTask(
                     task,
                     () -> { // onTaskDone
-                        taskRepository.update(task);
+                        try {
+                            task.setDone(true);
+                            taskRepository.update(task);
+                            controller.updateUI();
+                        } catch (Exception e) {
+                            showErrorAlert("Ошибка", "Не удалось обновить задачу");
+                            e.printStackTrace();
+                        }
                     },
                     () -> { // onDeleteTask
-                        taskRepository.delete(task.getId());
-                        tasksContainer.getChildren().remove(taskCard);
+                        try {
+                            taskRepository.delete(task.getId());
+                            tasksContainer.getChildren().remove(taskCard);
+                        } catch (Exception e) {
+                            showErrorAlert("Ошибка", "Не удалось удалить задачу");
+                            e.printStackTrace();
+                        }
+                    },
+                    () -> { // onEditTask
+                        TaskDialog editDialog = new TaskDialog(task.getProject(), task);
+                        Optional<Task> result = editDialog.showAndWait();
+                        result.ifPresent(updatedTask -> {
+                            try {
+                                // Обновляем ВСЕ поля задачи
+                                task.setTitle(updatedTask.getTitle());
+                                task.setDescription(updatedTask.getDescription());
+                                task.setPriority(updatedTask.getPriority());
+                                task.setDeadline(updatedTask.getDeadline());
+                                task.setWorker(updatedTask.getWorker());
+
+                                // Явно обновляем в БД
+                                taskRepository.update(task);
+
+                                // Обновляем UI
+                                controller.updateUI();
+
+                            } catch (Exception e) {
+                                showErrorAlert("Ошибка", "Не удалось обновить задачу");
+                                e.printStackTrace();
+                            }
+                        });
                     }
             );
 
             tasksContainer.getChildren().add(taskCard);
         } catch (IOException e) {
-            showErrorAlert("Ошибка загрузки", e.getMessage());
+            showErrorAlert("Ошибка", "Не удалось загрузить карточку задачи");
+            e.printStackTrace();
         }
     }
 

@@ -40,6 +40,7 @@ public class DatabaseTaskRepository implements TaskRepository{
                 task.setProject(rs.getString("project"));
                 tasks.add(task);
             }
+            System.out.println("Задачи успешно загружены из базы данных");
         } catch (SQLException e) {
             throw new RuntimeException("Не удаётся загрузить задачи из базы данных", e);
         }
@@ -73,6 +74,7 @@ public class DatabaseTaskRepository implements TaskRepository{
                     task.setId(rs.getInt(1));
                 }
             }
+            System.out.println("Задача успешно добавлена в базу данных");
         } catch (SQLException e) {
             throw new RuntimeException("Failed to save task to database", e);
         }
@@ -102,6 +104,7 @@ public class DatabaseTaskRepository implements TaskRepository{
             if (affectedRows == 0) {
                 throw new RuntimeException("Не найдено задачи с таким id: " + task.getId());
             }
+            System.out.println("Задача успешно обновлена в базе данных");
         } catch (SQLException e) {
             throw new RuntimeException("Не удалось обновить задачу в базе данных", e);
         }
@@ -123,6 +126,7 @@ public class DatabaseTaskRepository implements TaskRepository{
             if (affectedRows == 0) {
                 throw new RuntimeException("Не найдено задачи с таким id: " + taskId);
             }
+            System.out.println("Задача успешно удалена из базы данных");
         } catch (SQLException e) {
             throw new RuntimeException("Не удалось удалить задачу из базы данных", e);
         }

@@ -28,21 +28,33 @@
     <Label fx:id="statusLabel"/>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
-        <!-- Кнопка "Отметить выполненной" -->
+
         <Button fx:id="markAsDoneButton"
                 text="Отметить выполненной"
                 styleClass="task-button task-button-undone"
                 onAction="#handleMarkAsDone"/>
 
-        <!-- Кнопка удаления -->
-        <Button fx:id="deleteButton"
-                styleClass="delete-button"
-                onAction="#handleDelete">
+        <!-- Кнопка редактирования -->
+        <Button fx:id="editButton"
+                onAction="#handleEdit"
+                styleClass="edit-button">
             <graphic>
                 <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                    <image>
-                        <Image url="@/trash.png"/>
-                    </image>
+                    <Image url="@/edit.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Редактировать задачу"/>
+            </tooltip>
+        </Button>
+
+        <!-- Кнопка удаления (существующая) -->
+        <Button fx:id="deleteButton"
+                onAction="#handleDelete"
+                styleClass="delete-button">
+            <graphic>
+                <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                    <Image url="@/trash.png"/>
                 </ImageView>
             </graphic>
             <tooltip>
