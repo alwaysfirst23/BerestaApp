@@ -14,14 +14,6 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/auth_window.fxml"));
-//        Parent root = loader.load();
-//
-//        AuthController controller = loader.getController(); // Получаем контроллер
-//        controller.setStage(primaryStage); // Передаем Stage в контроллер
-//
-//        primaryStage.setScene(new Scene(root));
-//        primaryStage.show();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/main_window.fxml"));
         Parent root = loader.load();
         primaryStage.setScene(new Scene(root));

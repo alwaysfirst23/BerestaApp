@@ -66,7 +66,10 @@
 
 /* Кнопка отметки выполнения */
 .task-button {
-    -fx-text-fill: white;
+    -fx-background-radius: 15px;
+        -fx-background-color: transparent;
+        -fx-padding: 0;
+        -fx-cursor: hand;
 }
 
 .task-button:default {
@@ -75,11 +78,39 @@
 
 .task-button:default:hover {
     -fx-background-color: #45a049;
+    -fx-effect: dropshadow(gaussian, rgba(8, 212, 212, 0.5), 5, 0.5, 0, 0);
 }
 
 .task-button:disabled {
     -fx-background-color: #cccccc;
     -fx-opacity: 1.0;
+}
+
+.task-button:pressed {
+    -fx-opacity: 0.7;
+}
+
+/* Круглая кнопка с галочкой */
+.circle-check-button {
+    -fx-background-radius: 12px;
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.circle-check-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(8, 212, 212, 0.3), 3, 0.3, 0, 0);
+}
+
+.circle-check-button:pressed {
+    -fx-opacity: 0.7;
+}
+
+/* Стиль для заголовка задачи */
+.task-title-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-padding: 0 0 0 5px;
 }
 
 /* Кнопка удаления */
@@ -102,10 +133,10 @@
 
 /* Основные стили колонки */
 .project-column {
-    -fx-border-color: #000000;
+    -fx-border-color: #B0EAEB;
     -fx-border-width: 1px;
     -fx-border-radius: 5px;
-    -fx-background-color: #ffffff;
+    -fx-background-color: #2D2F2F;
     -fx-padding: 10px;
     -fx-spacing: 10px;
 }
@@ -234,4 +265,60 @@
 
 .edit-button:hover .image-view {
     -fx-effect: dropshadow(gaussian, #2196F3, 5, 0.5, 0, 0);
+}
+
+/* Стили для TabPane */
+.tab-pane {
+    -fx-background-color: #313333; /* Основной фон */
+    -fx-tab-min-width: 100px;
+    -fx-tab-max-width: 200px;
+}
+
+/* Область заголовков вкладок */
+.tab-pane > .tab-header-area {
+    -fx-background-color: #313333; /* Фон панели вкладок */
+    -fx-padding: 0 0 0 10px;
+}
+
+/* Фон за заголовками вкладок */
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #313333; /* Убираем белый фон */
+    -fx-effect: null; /* Убираем тень по умолчанию */
+}
+
+/* Отдельные вкладки */
+.tab {
+    -fx-background-color: #2D2F2F; /* Цвет неактивных вкладок */
+    -fx-background-insets: 0 1 0 0;
+    -fx-background-radius: 5 5 0 0;
+    -fx-padding: 5 15;
+    -fx-cursor: hand;
+}
+
+/* Активная вкладка */
+.tab:selected {
+    -fx-background-color: #B0EAEB; /* Цвет активной вкладки */
+    -fx-text-fill: #2D2F2F; /* Цвет текста активной вкладки */
+}
+
+/* Текст вкладок */
+.tab .tab-label {
+    -fx-text-fill: #2D2F2F; /* Цвет текста неактивных вкладок */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: #2D2F2F; /* Цвет текста активной вкладки */
+}
+
+/* Эффекты при наведении */
+.tab:hover {
+    -fx-background-color: #3a3d3d; /* Цвет при наведении */
+}
+
+/* Контент вкладок */
+.tab-content-area {
+    -fx-background-color: #313333; /* Фон содержимого вкладок */
+    -fx-border-color: transparent;
 }

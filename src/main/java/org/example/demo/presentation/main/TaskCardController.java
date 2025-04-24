@@ -5,10 +5,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import org.example.demo.domain.Task;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 public class TaskCardController {
@@ -58,11 +58,14 @@ public class TaskCardController {
         statusLabel.setText("Статус: " + (task.isDone() ? "Выполнено" : "В работе"));
 
         if (task.isDone()) {
-            markAsDoneButton.setText("Выполнено");
+            //markAsDoneButton.setText("Выполнено");
+            StackPane graphicContainer = (StackPane) markAsDoneButton.getGraphic();
+            ImageView foundIcon = (ImageView) graphicContainer.lookup("#checkIcon"); // если указан fx:id
+            foundIcon.setVisible(true);
             markAsDoneButton.setDisable(true);
             // Удалено setStyle, так как стиль теперь в CSS
         } else {
-            markAsDoneButton.setText("Отметить выполненной");
+            //markAsDoneButton.setText("Отметить выполненной");
             markAsDoneButton.setDisable(false);
             // Удалено setStyle, так как стиль теперь в CSS
         }

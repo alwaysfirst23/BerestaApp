@@ -1,45 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.MainController">
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<BorderPane prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.MainController">
 
     <top>
-        <HBox fx:id="topPanel" alignment="CENTER_LEFT" spacing="10">
+        <HBox fx:id="topPanel" alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="850.0" spacing="10" style="-fx-background-color: #2D2F2F;">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
-            <Button fx:id="profileButton" mnemonicParsing="false" text="Мой профиль" />
+            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Мой профиль" textFill="#b0eaeb">
+            <graphic>
+               <ImageView fitHeight="19.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@profile.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+            <font>
+               <Font size="14.0" />
+            </font></Button>
             <Region HBox.hgrow="ALWAYS" />
-            <TextField fx:id="searchField" promptText="Поиск..." HBox.hgrow="ALWAYS" />
-            <Button fx:id="menuButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="☰" />
+            <TextField fx:id="searchField" prefHeight="26.0" prefWidth="0.0" promptText="Поиск..." style="-fx-background-color: #f3ffff;" HBox.hgrow="ALWAYS" />
+            <Button fx:id="menuButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" style="-fx-background-color: transparent;">
+            <font>
+               <Font size="13.0" />
+            </font>
+            <graphic>
+               <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@settings_img.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+            </Button>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
         </HBox>
     </top>
 
     <center>
-        <TabPane fx:id="tabPane" prefHeight="505.0" prefWidth="800.0">
+        <!-- Основной контент (без SplitPane) -->
+        <TabPane fx:id="tabPane" prefHeight="505.0" prefWidth="800.0" stylesheets="@/styles.css">
             <tabs>
-                <Tab closable="false" text="Проекты">
+                <Tab closable="false" style="-fx-background-color: #B0EAEB;" text="Проекты">
                     <content>
-                        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER">
-                            <!-- Заменяем FlowPane на VBox/HBox с правильными настройками -->
-                            <HBox fx:id="projectsContainer"
-                                  alignment="TOP_LEFT"
-                                  spacing="20"
-                                  style="-fx-padding: 10;">
-                                <!-- Колонки будут добавляться сюда -->
-                            </HBox>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
+                            <HBox fx:id="projectsContainer" alignment="TOP_LEFT" spacing="20" style="-fx-padding: 10; -fx-background-color: #313333;" />
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab closable="false" text="Мои задачи">
-                    <content>
-
-                    </content>
+                <Tab closable="false" style="-fx-background-color: #B0EAEB;" text="Мои задачи">
+                    <content></content>
                 </Tab>
-                <Tab closable="false" text="Статистика">
+                <Tab closable="false" style="-fx-background-color: #B0EAEB;" text="Статистика">
                     <content>
                         <Label text="Содержимое третьей вкладки" />
                     </content>
@@ -49,12 +80,32 @@
     </center>
 
     <bottom>
-        <StackPane fx:id="bottomRightButton" alignment="BOTTOM_RIGHT">
-            <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
-            <Button fx:id="addWindowButton" onAction="#showCreateWindowDialog" text="+" />
-        </StackPane>
+        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2D2F2F; -fx-padding: 5;">
+            <!-- Pomodoro Timer с круглыми кнопками -->
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 15 0 15;">
+                <Label fx:id="pomodoroTimeLabel" text="25:00"
+                       style="-fx-text-fill: #B0EAEB; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                <!-- Кнопка старта -->
+                <Button fx:id="startPomodoroButton" text="▶"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
+
+                <!-- Кнопка паузы -->
+                <Button fx:id="pausePomodoroButton" text="⏸"
+                        style="-fx-background-color: #FFC107; -fx-text-fill: black; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
+
+                <!-- Кнопка сброса -->
+                <Button fx:id="resetPomodoroButton" text="↻"
+                        style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Кнопка добавления -->
+            <Button fx:id="addWindowButton" onAction="#showCreateWindowDialog"
+                    style="-fx-background-color: #B0EAEB; -fx-text-fill: black; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"
+                    text="+"/>
+        </HBox>
     </bottom>
 
 </BorderPane>

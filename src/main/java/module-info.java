@@ -9,7 +9,6 @@ module org.example.demo {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
-    requires com.almasb.fxgl.all;
     requires annotations;
     requires okhttp3.java.net.cookiejar;
     requires org.json;
