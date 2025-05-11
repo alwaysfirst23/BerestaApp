@@ -88,15 +88,15 @@
 
                 <!-- Кнопка старта -->
                 <Button fx:id="startPomodoroButton" text="▶"
-                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
+                        style="-fx-background-color: #B0EAEB; -fx-text-fill: black; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
 
                 <!-- Кнопка паузы -->
                 <Button fx:id="pausePomodoroButton" text="⏸"
-                        style="-fx-background-color: #FFC107; -fx-text-fill: black; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
+                        style="-fx-background-color: #B0EAEB; -fx-text-fill: black; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
 
                 <!-- Кнопка сброса -->
                 <Button fx:id="resetPomodoroButton" text="↻"
-                        style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
+                        style="-fx-background-color: #B0EAEB; -fx-text-fill: black; -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-radius: 20; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0;"/>
             </HBox>
 
             <Region HBox.hgrow="ALWAYS"/>

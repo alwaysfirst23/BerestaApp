@@ -73,7 +73,7 @@ public class MainController {
 
     private void initPomodoroTimer() {
         try {
-            pomodoroTimer = new PomodoroTimer(2, 1);
+            pomodoroTimer = new PomodoroTimer(25, 5);
 
             // Привязка только к pomodoroTimeLabel (без pomodoroModeLabel)
             pomodoroTimeLabel.textProperty().bind(pomodoroTimer.remainingTimeProperty());
