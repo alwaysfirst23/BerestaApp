@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.demo.presentation.main.TasksTabController">
+    <center>
+        <StackPane>
+            <!-- Пустой контейнер для динамического создания диаграммы -->
+            <Pane fx:id="chartContainer" style="-fx-background-color: #313333;">
+                <!-- Диаграмма будет создаваться программно -->
+            </Pane>
+
+            <Label fx:id="emptyLabel" text="Нет задач для отображения"
+                   style="-fx-text-fill: #B0EAEB; -fx-font-size: 16px;" visible="false"/>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox style="-fx-background-color: #2D2F2F; -fx-padding: 10;" alignment="CENTER_RIGHT">
+            <Button fx:id="refreshButton" text="Обновить"
+                    style="-fx-background-color: #B0EAEB; -fx-text-fill: #2D2F2F;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

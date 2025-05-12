@@ -69,6 +69,18 @@ public class MainController {
         Platform.runLater(() -> {
             loadTasksByProjects();
         });
+        tabPane.getSelectionModel().selectFirst();
+
+        // Загружаем контент для вкладки "Мои задачи"
+        Tab tasksTab = tabPane.getTabs().get(1);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tasks_tab.fxml"));
+            Pane tasksContent = loader.load();
+            tasksTab.setContent(tasksContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Ошибка", "Не удалось загрузить вкладку задач");
+        }
     }
 
     private void initPomodoroTimer() {
