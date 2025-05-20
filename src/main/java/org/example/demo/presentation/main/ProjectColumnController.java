@@ -14,6 +14,7 @@ import org.example.demo.services.TaskService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 public class ProjectColumnController {
@@ -52,54 +53,41 @@ public class ProjectColumnController {
             VBox taskCard = loader.load();
             TaskCardController controller = loader.getController();
 
+            // Проверяем, является ли задача подзадачей
+            boolean isSubtask = taskService.isSubtask(task.getId());
+
             controller.setTask(
                     task,
-                    () -> { // onTaskDone
-                        try {
-                            task.setDone(true);
-                            taskService.updateTask(task);
-                            controller.updateUI();
-                        } catch (Exception e) {
-                            showErrorAlert("Ошибка", "Не удалось обновить задачу");
-                        }
-                    },
-                    () -> { // onDeleteTask
-                        try {
-                            taskService.deleteTask(task.getId());
-                            tasksContainer.getChildren().remove(taskCard);
-                        } catch (Exception e) {
-                            showErrorAlert("Ошибка", "Не удалось удалить задачу");
-                        }
-                    },
-                    () -> { // onEditTask
-                        TaskDialog editDialog = new TaskDialog(task.getProject(), task);
-                        Optional<Task> result = editDialog.showAndWait();
-                        result.ifPresent(updatedTask -> {
-                            try {
-                                taskService.updateTask(updatedTask);
-                                controller.updateUI();
-                            } catch (Exception e) {
-                                showErrorAlert("Ошибка", "Не удалось обновить задачу");
-                            }
-                        });
-                    },
-                    () -> { // onAddSubtask
-                        TaskDialog subtaskDialog = new TaskDialog(projectName);
-                        Optional<Task> result = subtaskDialog.showAndWait();
-                        result.ifPresent(subtask -> {
-                            try {
-                                taskService.createTask(subtask, task.getId()); // Здесь связываем с родителем
-                                addTask(subtask);
-                            } catch (Exception e) {
-                                showErrorAlert("Ошибка создания подзадачи", e.getMessage());
-                            }
-                        });
-                    }
+                    taskService,
+                    isSubtask,
+                    this::refreshColumn
             );
 
-            tasksContainer.getChildren().add(taskCard);
+            // Добавляем в контейнер только если это не подзадача
+            if (!isSubtask) {
+                tasksContainer.getChildren().add(taskCard);
+            }
         } catch (IOException e) {
             showErrorAlert("Ошибка", "Не удалось загрузить карточку задачи");
+        }
+    }
+
+    private void refreshColumn() {
+        tasksContainer.getChildren().clear();
+        loadTasksForProject();
+    }
+
+    private void loadTasksForProject() {
+        try {
+            // Загружаем только родительские задачи для этого проекта
+            List<Task> parentTasks = taskService.findAllTasks().stream()
+                    .filter(task -> projectName.equals(task.getProject()))
+                    .filter(task -> !taskService.isSubtask(task.getId()))
+                    .toList();
+
+            parentTasks.forEach(this::addTask);
+        } catch (Exception e) {
+            showErrorAlert("Ошибка", "Не удалось загрузить задачи");
         }
     }
 

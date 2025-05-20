@@ -6,6 +6,8 @@ import org.example.demo.infrastructure.DatabaseTaskRepository;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TaskService {
     private final DatabaseTaskRepository taskRepo;
@@ -59,6 +61,22 @@ public class TaskService {
 
     public void removeSubtask(int parentId, int childId) {
         subtaskRepo.removeSubtask(parentId, childId);
+    }
+
+    /**
+     * Получает все подзадачи для указанной задачи
+     * @param parentId ID родительской задачи
+     * @return список подзадач (объектов Task)
+     */
+    public List<Task> findSubtasks(int parentId) {
+        // Получаем ID подзадач
+        List<Integer> subtaskIds = subtaskRepo.findSubtasks(parentId);
+
+        // Получаем полные объекты Task по ID
+        return subtaskIds.stream()
+                .map(taskRepo::findById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public boolean isSubtask(int taskId) {

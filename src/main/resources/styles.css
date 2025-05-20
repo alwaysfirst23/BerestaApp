@@ -295,6 +295,26 @@
     -fx-cursor: hand;
 }
 
+/* Стиль для контейнера подзадач */
+.subtasks-container {
+    -fx-spacing: 5;
+    -fx-padding: 5 0 0 0;
+}
+
+/* Стиль для карточки подзадачи */
+.task-card.subtask {
+    -fx-background-color: derive(#F3FFFF, -5%);
+    -fx-border-color: #08D4D4;
+    -fx-border-width: 0 0 0 2;
+    -fx-border-insets: 0 0 0 10;
+}
+
+/* Стиль для соединительной линии */
+.connection-line {
+    -fx-stroke: #08D4D4;
+    -fx-stroke-width: 1.5;
+}
+
 /* Активная вкладка */
 .tab:selected {
     -fx-background-color: #B0EAEB; /* Цвет активной вкладки */

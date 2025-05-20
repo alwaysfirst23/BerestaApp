@@ -12,8 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Polyline?>
 
-<VBox opacity="0.9" spacing="5" style="-fx-background-radius: 10; -fx-border-color: transparent; -fx-border-radius: 10; -fx-background-color: #F3FFFF;" styleClass="task-card" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.TaskCardController">
+<VBox fx:id="mainContainer" style="-fx-background-radius: 10; -fx-border-color: transparent; -fx-border-radius: 10; -fx-background-color: #F3FFFF;" styleClass="task-card" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.TaskCardController">
     <stylesheets>
         <URL value="@styles.css" />
     </stylesheets>
@@ -22,7 +23,21 @@
         <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
 
+    <!-- Заголовок задачи с кнопками -->
     <HBox alignment="CENTER_LEFT" spacing="5">
+        <!-- Кнопка сворачивания/разворачивания подзадач -->
+        <Button fx:id="toggleSubtasksButton" maxHeight="24" maxWidth="24" minHeight="24" minWidth="24" styleClass="transparent-button">
+            <graphic>
+                <ImageView fx:id="toggleIcon" fitHeight="16" fitWidth="16">
+                    <Image url="@/arrow_down.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Показать/скрыть подзадачи" />
+            </tooltip>
+        </Button>
+
+        <!-- Кнопка выполнения задачи -->
         <StackPane>
             <Button fx:id="markAsDoneButton" maxHeight="24" maxWidth="24" minHeight="24" minWidth="24" onAction="#handleMarkAsDone" styleClass="circle-check-button">
                 <graphic>
@@ -33,21 +48,28 @@
                         </ImageView>
                     </StackPane>
                 </graphic>
+                <tooltip>
+                    <Tooltip text="Отметить как выполненную" />
+                </tooltip>
             </Button>
         </StackPane>
+
+        <!-- Название задачи -->
         <Label fx:id="titleLabel" styleClass="task-title-label" />
     </HBox>
 
-    <VBox opacity="0.9" prefHeight="54.0" prefWidth="100.0" style="-fx-background-color: #F3FFFF;">
+    <!-- Основное содержимое карточки -->
+    <VBox style="-fx-background-color: #F3FFFF;">
         <children>
-            <Label fx:id="descriptionLabel" textFill="#e8eeee" wrapText="true" />
-            <Label fx:id="deadlineLabel" textFill="#e8eeee" />
-            <Label fx:id="workerLabel" textFill="#e8eeee" />
-            <Label fx:id="priorityLabel" textFill="#e8eeee" />
-            <Label fx:id="statusLabel" textFill="#e8eeee" />
+            <Label fx:id="descriptionLabel" textFill="#313333" wrapText="true" />
+            <Label fx:id="deadlineLabel" textFill="#313333" />
+            <Label fx:id="workerLabel" textFill="#313333" />
+            <Label fx:id="priorityLabel" textFill="#313333" />
+            <Label fx:id="statusLabel" textFill="#313333" />
         </children>
     </VBox>
 
+    <!-- Панель кнопок управления -->
     <HBox alignment="CENTER_RIGHT" spacing="10">
         <!-- Кнопка добавления подзадачи -->
         <Button fx:id="addSubtaskButton" maxHeight="24" maxWidth="24" minHeight="24" minWidth="24" onAction="#handleAddSubtask" styleClass="circle-plus-button">
@@ -63,6 +85,7 @@
             </graphic>
         </Button>
 
+        <!-- Кнопка редактирования -->
         <Button fx:id="editButton" onAction="#handleEdit" styleClass="edit-button">
             <tooltip>
                 <Tooltip text="Редактировать задачу" />
@@ -74,6 +97,7 @@
             </graphic>
         </Button>
 
+        <!-- Кнопка удаления -->
         <Button fx:id="deleteButton" onAction="#handleDelete" styleClass="delete-button">
             <tooltip>
                 <Tooltip text="Удалить задачу" />
@@ -85,4 +109,11 @@
             </graphic>
         </Button>
     </HBox>
+
+    <!-- Контейнер для подзадач -->
+    <VBox fx:id="subtasksContainer" styleClass="subtasks-container">
+        <padding>
+            <Insets left="20.0" />
+        </padding>
+    </VBox>
 </VBox>
