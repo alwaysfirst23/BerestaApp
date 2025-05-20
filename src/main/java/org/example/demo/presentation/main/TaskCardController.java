@@ -19,19 +19,53 @@ public class TaskCardController {
     @FXML public Label priorityLabel;
     @FXML public Label statusLabel;
     @FXML private Button markAsDoneButton;
-    private Task task;
-    Runnable onTaskDone;
+    @FXML private Button addSubtaskButton;
     @FXML private Button deleteButton;
-    Runnable onDeleteTask;
     @FXML private Button editButton;
-    Runnable onEditTask;
 
-    public void setTask(Task task, Runnable onTaskDone, Runnable onDeleteTask, Runnable onEditTask) {
+    private Task task;
+    private Runnable onTaskDone;
+    private Runnable onDeleteTask;
+    private Runnable onEditTask;
+    private Runnable onAddSubtask;
+
+    public void setTask(Task task, Runnable onTaskDone, Runnable onDeleteTask,
+                        Runnable onEditTask, Runnable onAddSubtask) {
         this.task = task;
         this.onTaskDone = onTaskDone;
         this.onDeleteTask = onDeleteTask;
         this.onEditTask = onEditTask;
+        this.onAddSubtask = onAddSubtask;
         updateUI();
+    }
+
+    void updateUI() {
+        titleLabel.setText(task.getTitle());
+        descriptionLabel.setText(task.getDescription());
+        deadlineLabel.setText("Дедлайн: " + task.getDeadline());
+        workerLabel.setText("Исполнитель: " + task.getWorker());
+        priorityLabel.setText("Приоритет: " + task.getPriority());
+        statusLabel.setText("Статус: " + (task.isDone() ? "Выполнено" : "В работе"));
+
+        if (task.isDone()) {
+            StackPane graphicContainer = (StackPane) markAsDoneButton.getGraphic();
+            ImageView foundIcon = (ImageView) graphicContainer.lookup("#checkIcon");
+            foundIcon.setVisible(true);
+            markAsDoneButton.setDisable(true);
+        } else {
+            markAsDoneButton.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void handleMarkAsDone() {
+        if (!task.isDone()) {
+            task.setDone(true);
+            updateUI();
+            if (onTaskDone != null) {
+                onTaskDone.run();
+            }
+        }
     }
 
     @FXML
@@ -49,44 +83,17 @@ public class TaskCardController {
         }
     }
 
-    void updateUI() {
-        titleLabel.setText(task.getTitle());
-        descriptionLabel.setText(task.getDescription());
-        deadlineLabel.setText("Дедлайн: " + task.getDeadline());
-        workerLabel.setText("Исполнитель: " + task.getWorker());
-        priorityLabel.setText("Приоритет: " + task.getPriority());
-        statusLabel.setText("Статус: " + (task.isDone() ? "Выполнено" : "В работе"));
-
-        if (task.isDone()) {
-            //markAsDoneButton.setText("Выполнено");
-            StackPane graphicContainer = (StackPane) markAsDoneButton.getGraphic();
-            ImageView foundIcon = (ImageView) graphicContainer.lookup("#checkIcon"); // если указан fx:id
-            foundIcon.setVisible(true);
-            markAsDoneButton.setDisable(true);
-            // Удалено setStyle, так как стиль теперь в CSS
-        } else {
-            //markAsDoneButton.setText("Отметить выполненной");
-            markAsDoneButton.setDisable(false);
-            // Удалено setStyle, так как стиль теперь в CSS
-        }
-    }
-
-    @FXML
-    private void handleMarkAsDone() {
-        if (!task.isDone()) {
-            task.setDone(true);
-            updateUI();
-            if (onTaskDone != null) {
-                onTaskDone.run();
-            }
-        }
-    }
-
     @FXML
     private void handleEdit() {
-        // Логика редактирования задачи
         if (onEditTask != null) {
             onEditTask.run();
+        }
+    }
+
+    @FXML
+    private void handleAddSubtask() {
+        if (onAddSubtask != null) {
+            onAddSubtask.run();
         }
     }
 }

@@ -12,8 +12,10 @@ import javafx.stage.StageStyle;
 import javafx.util.Pair;
 import org.example.demo.domain.Task;
 import org.example.demo.infrastructure.DatabaseConnector;
+import org.example.demo.infrastructure.DatabaseSubtaskRepository;
 import org.example.demo.infrastructure.DatabaseTaskRepository;
 import org.example.demo.services.PomodoroTimer;
+import org.example.demo.services.TaskService;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,7 +47,7 @@ public class MainController {
     private Button addWindowButton;
 
     @FXML private HBox projectsContainer; // Новое имя для HBox
-    private DatabaseTaskRepository taskRepository;
+    private TaskService taskService;
 
     @FXML private VBox pomodoroPanel;
     @FXML private Label pomodoroTimeLabel;
@@ -62,7 +64,7 @@ public class MainController {
         setupTabPane();
         setupRoundButton();
         setupMenuButton(menuButton);
-        this.taskRepository = new DatabaseTaskRepository(DatabaseConnector.taskConnect());
+        this.taskService = new TaskService(DatabaseConnector.taskConnect());
         // Инициализация Pomodoro Timer
         initPomodoroTimer();
         // Переносим загрузку задач после полной инициализации
@@ -140,38 +142,23 @@ public class MainController {
 
     private void loadTasksByProjects() {
         try {
-            // Проверка инициализации
-            if (projectsContainer == null) {
-                System.err.println("Error: projectsContainer is not initialized!");
-                return;
-            }
-
-            // Очищаем существующие колонки
             projectsContainer.getChildren().clear();
 
-            // Загружаем задачи из репозитория
-            List<Task> tasks = taskRepository.findAll();
+            List<Task> tasks = taskService.findAllTasks(); // Используем метод сервиса
             Map<String, List<Task>> tasksByProject = tasks.stream()
+                    .filter(task -> !taskService.isSubtask(task.getId())) // Исключаем подзадачи
                     .collect(Collectors.groupingBy(Task::getProject));
 
-            // Создаем колонки для каждого проекта
             tasksByProject.forEach((projectName, projectTasks) -> {
                 try {
-                    // Создаем новую колонку
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                            "/project_column.fxml"
-                    ));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/project_column.fxml"));
                     VBox projectColumn = loader.load();
                     ProjectColumnController controller = loader.getController();
 
-                    // Настраиваем колонку
                     controller.setProjectName(projectName);
-                    controller.setTaskRepository(taskRepository);
+                    controller.setTaskService(taskService); // Передаем сервис вместо репозитория
 
-                    // Добавляем задачи в колонку
                     projectTasks.forEach(controller::addTask);
-
-                    // Добавляем колонку в контейнер
                     projectsContainer.getChildren().add(projectColumn);
 
                 } catch (IOException e) {
@@ -317,28 +304,18 @@ public class MainController {
 
     private void addProjectColumn(String projectName) {
         try {
-            // Загрузка FXML колонки
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/project_column.fxml"
-            ));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/project_column.fxml"));
             VBox newColumn = loader.load();
             ProjectColumnController controller = loader.getController();
 
-            // Настройка поведения высоты
             newColumn.setMaxHeight(Double.MAX_VALUE);
             newColumn.minHeightProperty().bind(newColumn.prefHeightProperty());
 
-            // Инициализация колонки
             controller.setProjectName(projectName);
-            controller.setTaskRepository(taskRepository);
+            controller.setTaskService(taskService); // Передаем сервис вместо репозитория
 
-            // Добавление в контейнер
             projectsContainer.getChildren().add(newColumn);
-
-            // Принудительное обновление layout
-            Platform.runLater(() -> {
-                projectsContainer.requestLayout();
-            });
+            Platform.runLater(() -> projectsContainer.requestLayout());
 
         } catch (IOException e) {
             e.printStackTrace();

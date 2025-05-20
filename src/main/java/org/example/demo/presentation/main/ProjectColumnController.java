@@ -10,6 +10,7 @@ import org.example.demo.domain.Task;
 import org.example.demo.domain.exceptions.IncorrectTask;
 import org.example.demo.infrastructure.DatabaseTaskRepository;
 import org.example.demo.presentation.TaskDialog;
+import org.example.demo.services.TaskService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ public class ProjectColumnController {
 
     private String projectName;
     @Setter
-    private DatabaseTaskRepository taskRepository;
+    private TaskService taskService; // Заменяем DatabaseTaskRepository на TaskService
 
     public void setProjectName(String name) {
         this.projectName = name;
@@ -37,9 +38,7 @@ public class ProjectColumnController {
 
         result.ifPresent(task -> {
             try {
-                // Сохраняем в БД
-                taskRepository.save(task);
-                // Добавляем в UI
+                taskService.createTask(task, null); // null - значит это не подзадача
                 addTask(task);
             } catch (Exception e) {
                 showErrorAlert("Ошибка сохранения задачи", e.getMessage());
@@ -58,20 +57,18 @@ public class ProjectColumnController {
                     () -> { // onTaskDone
                         try {
                             task.setDone(true);
-                            taskRepository.update(task);
+                            taskService.updateTask(task);
                             controller.updateUI();
                         } catch (Exception e) {
                             showErrorAlert("Ошибка", "Не удалось обновить задачу");
-                            e.printStackTrace();
                         }
                     },
                     () -> { // onDeleteTask
                         try {
-                            taskRepository.delete(task.getId());
+                            taskService.deleteTask(task.getId());
                             tasksContainer.getChildren().remove(taskCard);
                         } catch (Exception e) {
                             showErrorAlert("Ошибка", "Не удалось удалить задачу");
-                            e.printStackTrace();
                         }
                     },
                     () -> { // onEditTask
@@ -79,22 +76,22 @@ public class ProjectColumnController {
                         Optional<Task> result = editDialog.showAndWait();
                         result.ifPresent(updatedTask -> {
                             try {
-                                // Обновляем ВСЕ поля задачи
-                                task.setTitle(updatedTask.getTitle());
-                                task.setDescription(updatedTask.getDescription());
-                                task.setPriority(updatedTask.getPriority());
-                                task.setDeadline(updatedTask.getDeadline());
-                                task.setWorker(updatedTask.getWorker());
-
-                                // Явно обновляем в БД
-                                taskRepository.update(task);
-
-                                // Обновляем UI
+                                taskService.updateTask(updatedTask);
                                 controller.updateUI();
-
                             } catch (Exception e) {
                                 showErrorAlert("Ошибка", "Не удалось обновить задачу");
-                                e.printStackTrace();
+                            }
+                        });
+                    },
+                    () -> { // onAddSubtask
+                        TaskDialog subtaskDialog = new TaskDialog(projectName);
+                        Optional<Task> result = subtaskDialog.showAndWait();
+                        result.ifPresent(subtask -> {
+                            try {
+                                taskService.createTask(subtask, task.getId()); // Здесь связываем с родителем
+                                addTask(subtask);
+                            } catch (Exception e) {
+                                showErrorAlert("Ошибка создания подзадачи", e.getMessage());
                             }
                         });
                     }
@@ -103,7 +100,6 @@ public class ProjectColumnController {
             tasksContainer.getChildren().add(taskCard);
         } catch (IOException e) {
             showErrorAlert("Ошибка", "Не удалось загрузить карточку задачи");
-            e.printStackTrace();
         }
     }
 

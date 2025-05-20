@@ -48,6 +48,38 @@ public class DatabaseTaskRepository implements TaskRepository{
     }
 
     /**
+     * Находит задачу по её ID
+     * @param taskId ID задачи
+     * @return объект Task или null, если задача не найдена
+     */
+    public Task findById(int taskId) {
+        String sql = "SELECT id, title, description, priority, deadline, worker, is_done, project FROM tasks WHERE id = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, taskId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Task task = new Task(
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getInt("priority"),
+                            parseDate(rs.getString("deadline")),
+                            rs.getString("worker")
+                    );
+                    task.setId(rs.getInt("id"));
+                    task.setDone(rs.getBoolean("is_done"));
+                    task.setProject(rs.getString("project"));
+                    return task;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Не удалось найти задачу по ID: " + taskId, e);
+        }
+        return null; // Если задача не найдена
+    }
+
+    /**
      * Вставляет новую запись в базу данных.
      * Устанавливает автоматически сгенерированный ID обратно в объект Task
      * @param task объект класса Task, задача

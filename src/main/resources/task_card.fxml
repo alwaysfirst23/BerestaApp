@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Line?>
 
 <VBox opacity="0.9" spacing="5" style="-fx-background-radius: 10; -fx-border-color: transparent; -fx-border-radius: 10; -fx-background-color: #F3FFFF;" styleClass="task-card" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo.presentation.main.TaskCardController">
     <stylesheets>
@@ -36,18 +37,32 @@
         </StackPane>
         <Label fx:id="titleLabel" styleClass="task-title-label" />
     </HBox>
-   <VBox opacity="0.9" prefHeight="54.0" prefWidth="100.0" style="-fx-background-color: #F3FFFF;">
-      <children>
-      
-          <Label fx:id="descriptionLabel" textFill="#e8eeee" wrapText="true" />
-          <Label fx:id="deadlineLabel" textFill="#e8eeee" />
-          <Label fx:id="workerLabel" textFill="#e8eeee" />
-          <Label fx:id="priorityLabel" textFill="#e8eeee" />
-          <Label fx:id="statusLabel" textFill="#e8eeee" />
-      </children>
-   </VBox>
+
+    <VBox opacity="0.9" prefHeight="54.0" prefWidth="100.0" style="-fx-background-color: #F3FFFF;">
+        <children>
+            <Label fx:id="descriptionLabel" textFill="#e8eeee" wrapText="true" />
+            <Label fx:id="deadlineLabel" textFill="#e8eeee" />
+            <Label fx:id="workerLabel" textFill="#e8eeee" />
+            <Label fx:id="priorityLabel" textFill="#e8eeee" />
+            <Label fx:id="statusLabel" textFill="#e8eeee" />
+        </children>
+    </VBox>
 
     <HBox alignment="CENTER_RIGHT" spacing="10">
+        <!-- Кнопка добавления подзадачи -->
+        <Button fx:id="addSubtaskButton" maxHeight="24" maxWidth="24" minHeight="24" minWidth="24" onAction="#handleAddSubtask" styleClass="circle-plus-button">
+            <tooltip>
+                <Tooltip text="Добавить подзадачу" />
+            </tooltip>
+            <graphic>
+                <StackPane>
+                    <Circle fill="transparent" radius="10.0" stroke="#08D4D4" strokeWidth="2" />
+                    <Line startX="-5" startY="0" endX="5" endY="0" stroke="#08D4D4" strokeWidth="2" />
+                    <Line startX="0" startY="-5" endX="0" endY="5" stroke="#08D4D4" strokeWidth="2" />
+                </StackPane>
+            </graphic>
+        </Button>
+
         <Button fx:id="editButton" onAction="#handleEdit" styleClass="edit-button">
             <tooltip>
                 <Tooltip text="Редактировать задачу" />

@@ -59,4 +59,26 @@ public class DatabaseInitializer {
             System.out.println("Ошибка при создании таблицы задач: " + e.getMessage());
         }
     }
+
+    /**
+     * Инициализация таблицы для хранения связей между задачами и подзадачами
+     */
+    public static void subtasksInitialize() {
+        String sql = "CREATE TABLE IF NOT EXISTS task_relations (\n"
+                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                + " parent_id INTEGER NOT NULL,\n"
+                + " child_id INTEGER NOT NULL,\n"
+                + " FOREIGN KEY (parent_id) REFERENCES tasks(id),\n"
+                + " FOREIGN KEY (child_id) REFERENCES tasks(id),\n"
+                + " UNIQUE(parent_id, child_id)\n"
+                + ");";
+
+        try (Connection conn = DatabaseConnector.taskConnect();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Таблица связей задач создана.");
+        } catch (SQLException e) {
+            System.out.println("Ошибка при создании таблицы связей задач: " + e.getMessage());
+        }
+    }
 }
