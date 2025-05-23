@@ -1,6 +1,8 @@
 package org.example.demo.presentation.main;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -106,8 +108,6 @@ public class TaskCardController {
 
             controller.setTask(subtask, taskService, true, this::loadSubtasks);
 
-            // Добавляем соединительную линию
-            addConnectionLine(subtaskCard);
             subtasksContainer.getChildren().add(subtaskCard);
 
         } catch (IOException e) {
@@ -115,33 +115,7 @@ public class TaskCardController {
         }
     }
 
-    private void addConnectionLine(Node subtaskCard) {
-        Path connectionPath = new Path();
-
-        // Создаем изогнутую линию со стрелкой
-        MoveTo start = new MoveTo(0, 10);
-        CubicCurveTo curve = new CubicCurveTo();
-        curve.setControlX1(10); curve.setControlY1(10);
-        curve.setControlX2(10); curve.setControlY2(0);
-        curve.setX(20); curve.setY(0);
-
-        // Стрелка
-        MoveTo arrowStart = new MoveTo(20, 0);
-        LineTo arrow1 = new LineTo(15, -5);
-        LineTo arrow2 = new LineTo(20, 0);
-        LineTo arrow3 = new LineTo(15, 5);
-
-        connectionPath.getElements().addAll(start, curve, arrowStart, arrow1, arrow2, arrow3);
-        connectionPath.setStroke(Color.web("#08D4D4"));
-        connectionPath.setStrokeWidth(1.5);
-        connectionPath.setFill(null);
-
-        StackPane connectionContainer = new StackPane(connectionPath);
-        connectionContainer.setAlignment(Pos.TOP_LEFT);
-        connectionContainer.setPadding(new Insets(-15, 0, 0, -20));
-        subtasksContainer.getChildren().add(connectionContainer);
-    }
-
+    @FXML
     private void toggleSubtasksVisibility() {
         if (subtasksContainer.isVisible()) {
             collapseSubtasks();
@@ -152,20 +126,43 @@ public class TaskCardController {
 
     private void expandSubtasks() {
         subtasksContainer.setVisible(true);
+        subtasksContainer.setManaged(true); // Возвращаем в расчет layout
+
+        // Анимация раскрытия
         FadeTransition fadeIn = new FadeTransition(Duration.millis(200), subtasksContainer);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
-        fadeIn.play();
-        toggleIcon.setRotate(0);
+
+        // Восстанавливаем исходную высоту
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), subtasksContainer);
+        scaleIn.setFromY(0);
+        scaleIn.setToY(1);
+
+        new ParallelTransition(fadeIn, scaleIn).play();
+        toggleIcon.setRotate(0); // Возвращаем иконку в исходное положение
     }
 
     private void collapseSubtasks() {
+        // Запоминаем текущую высоту перед сворачиванием
+        subtasksContainer.setUserData(subtasksContainer.getHeight());
+
+        // Анимация сворачивания
         FadeTransition fadeOut = new FadeTransition(Duration.millis(200), subtasksContainer);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e -> subtasksContainer.setVisible(false));
-        fadeOut.play();
-        toggleIcon.setRotate(-90);
+
+        // Параллельно анимируем высоту
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), subtasksContainer);
+        scaleOut.setToY(0);
+
+        ParallelTransition transition = new ParallelTransition(fadeOut, scaleOut);
+        transition.setOnFinished(e -> {
+            subtasksContainer.setVisible(false);
+            subtasksContainer.setManaged(false); // Важно! Убираем из расчета layout
+        });
+        transition.play();
+
+        toggleIcon.setRotate(-90); // Поворачиваем иконку
     }
 
     @FXML
