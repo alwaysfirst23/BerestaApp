@@ -1,8 +1,6 @@
 package org.example.demo.infrastructure;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Создаёт и инициализирует базы данных
@@ -15,15 +13,38 @@ public class DatabaseInitializer {
         String sql = "CREATE TABLE IF NOT EXISTS users (\n"
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
                 + " username TEXT NOT NULL UNIQUE,\n"
-                + " password TEXT NOT NULL\n"
+                + " password TEXT NOT NULL,\n"
+                + " display_name TEXT,\n"  // Добавленное поле для имени пользователя
+                + " avatar_url TEXT\n"     // Добавленное поле для ссылки на аватар
                 + ");";
 
         try (Connection conn = DatabaseConnector.authConnect();
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("Таблица пользователей создана.");
+            System.out.println("Таблица пользователей создана/проверена.");
+
+            // Добавляем новые колонки, если их нет (для случаев обновления)
+            addColumnIfNotExists(conn, "users", "display_name", "TEXT");
+            addColumnIfNotExists(conn, "users", "avatar_url", "TEXT");
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Ошибка инициализации БД: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Вспомогательный метод для добавления колонки, если она не существует
+     */
+    private static void addColumnIfNotExists(Connection conn, String table, String column, String type) throws SQLException {
+        DatabaseMetaData meta = conn.getMetaData();
+        try (ResultSet rs = meta.getColumns(null, null, table, column)) {
+            if (!rs.next()) {
+                String sql = String.format("ALTER TABLE %s ADD COLUMN %s %s", table, column, type);
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(sql);
+                    System.out.println("Добавлена колонка " + column + " в таблицу " + table);
+                }
+            }
         }
     }
 

@@ -38,6 +38,8 @@ public class TaskCardController {
     @FXML private Button deleteButton;
     @FXML private Button toggleSubtasksButton;
     @FXML private ImageView toggleIcon;
+    @FXML private Circle statusCircle;
+    @FXML private ImageView checkIcon;
 
     private Task task;
     private TaskService taskService;
@@ -68,7 +70,13 @@ public class TaskCardController {
         }
 
         if (task.isDone()) {
+            statusCircle.setVisible(false);  // Скрываем кружок
+            checkIcon.setVisible(true);      // Показываем иконку
             markAsDoneButton.setDisable(true);
+        } else {
+            statusCircle.setVisible(true);   // Показываем кружок
+            checkIcon.setVisible(false);     // Скрываем иконку
+            markAsDoneButton.setDisable(false);
         }
     }
 
@@ -167,12 +175,21 @@ public class TaskCardController {
 
     @FXML
     private void handleMarkAsDone() {
-        try {
+        if (!task.isDone()) {
             task.setDone(true);
-            taskService.updateTask(task);
-            updateUI();
-        } catch (Exception e) {
-            showAlert("Ошибка", "Не удалось обновить задачу");
+            try {
+                taskService.updateTask(task);
+                // Мгновенное переключение
+                statusCircle.setVisible(false);
+                checkIcon.setVisible(true);
+                markAsDoneButton.setDisable(true);
+
+                if (refreshCallback != null) {
+                    refreshCallback.run();
+                }
+            } catch (Exception e) {
+                showAlert("Ошибка", "Не удалось обновить задачу");
+            }
         }
     }
 

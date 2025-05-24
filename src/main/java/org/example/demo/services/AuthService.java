@@ -39,4 +39,54 @@ public class AuthService {
         }
         return false;
     }
+
+    /**
+     * Обновляет отображаемое имя пользователя
+     * @param username Логин пользователя
+     * @param displayName Новое отображаемое имя
+     * @return true если обновление успешно
+     */
+    public boolean updateDisplayName(String username, String displayName) {
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+        return userRepository.updateUserField(username, "display_name", displayName);
+    }
+
+    /**
+     * Обновляет аватар пользователя
+     * @param username Логин пользователя
+     * @param avatarUrl URL или путь к аватару
+     * @return true если обновление успешно
+     */
+    public boolean updateAvatar(String username, String avatarUrl) {
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+
+        // Опционально: валидация URL/пути
+        if (!isValidAvatarUrl(avatarUrl)) {
+            return false;
+        }
+
+        return userRepository.updateUserField(username, "avatar_url", avatarUrl);
+    }
+
+    /**
+     * Получает полную информацию о пользователе
+     * @param username Логин пользователя
+     * @return Объект User или null если не найден
+     */
+    public User getUserProfile(String username) {
+        return userRepository.findUserByUsername(username);
+    }
+
+    // Простая валидация URL аватара
+    private boolean isValidAvatarUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return true; // Разрешаем null/пустую строку
+        }
+        // Проверяем допустимые расширения файлов
+        return url.matches("(?i).*\\.(png|jpg|jpeg|gif|svg|webp)$");
+    }
 }

@@ -42,8 +42,10 @@
             <Button fx:id="markAsDoneButton" maxHeight="24" maxWidth="24" minHeight="24" minWidth="24" onAction="#handleMarkAsDone" styleClass="circle-check-button">
                 <graphic>
                     <StackPane>
-                        <Circle fill="transparent" radius="10.0" stroke="#08D4D4" strokeWidth="2" />
-                        <ImageView fx:id="checkIcon" fitHeight="24.0" fitWidth="24.0" visible="false">
+                        <!-- Пустой кружок с голубым контуром -->
+                        <Circle fx:id="statusCircle" fill="transparent" radius="10.0" stroke="#08D4D4" strokeWidth="2" />
+                        <!-- Иконка галочки (только для выполненных задач) -->
+                        <ImageView fx:id="checkIcon" fitHeight="16" fitWidth="16" visible="false">
                             <Image url="@/checkmark.png" />
                         </ImageView>
                     </StackPane>

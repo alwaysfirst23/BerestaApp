@@ -35,27 +35,57 @@ public class UserRepository {
         }
     }
 
+
     /**
-     * Ищет пользователя в базе по логину
-     * @param username login пользователя
-     * @return объект класса User; null - если пользователь не найден
+     * Обновляет поле пользователя в базе данных
+     * @param username Логин пользователя
+     * @param fieldName Название поля (display_name или avatar_url)
+     * @param value Новое значение
+     * @return true если обновление успешно
      */
-    public User findUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
-        User user = null;
+    public boolean updateUserField(String username, String fieldName, String value) {
+        String sql = "UPDATE users SET " + fieldName + " = ? WHERE username = ?";
 
         try (Connection conn = DatabaseConnector.authConnect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, value);
+            pstmt.setString(2, username);
+
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Ошибка при обновлении поля " + fieldName + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Находит пользователя по логину
+     * @param username Логин пользователя
+     * @return Объект User со всеми полями или null если не найден
+     */
+    public User findUserByUsername(String username) {
+        String sql = "SELECT username, password, display_name, avatar_url FROM users WHERE username = ?";
+
+        try (Connection conn = DatabaseConnector.authConnect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                user = new User(rs.getString("username"), rs.getString("password"));
-                user.setId(rs.getInt("id"));
+                return new User(
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("display_name"),
+                        rs.getString("avatar_url")
+                );
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.err.println("Ошибка при поиске пользователя: " + e.getMessage());
         }
-        return user;
+        return null;
     }
 }

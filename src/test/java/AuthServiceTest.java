@@ -1,3 +1,4 @@
+import org.example.demo.domain.User;
 import org.example.demo.services.AuthService;
 import org.example.demo.infrastructure.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,12 +10,44 @@ public class AuthServiceTest {
 
     private AuthService authService;
     private UserRepository userRepository;
+    private final String TEST_USER = "testUser";
+    private final String TEST_PASS = "testPass123";
 
     @BeforeEach
     void setUp() {
         // Инициализируем UserRepository и AuthService перед каждым тестом
         userRepository = new UserRepository(); // Замените на вашу реализацию UserRepository
         authService = new AuthService();
+    }
+
+    @Test
+    void testUpdateDisplayName() {
+        // Регистрируем тестового пользователя
+        authService.register(TEST_USER, TEST_PASS);
+
+        String displayName = "Тестовый Пользователь";
+
+        // Обновляем имя
+        boolean updateResult = authService.updateDisplayName(TEST_USER, displayName);
+        assertTrue(updateResult, "Обновление имени должно быть успешным");
+
+        // Проверяем, что имя сохранилось
+        User user = authService.getUserProfile(TEST_USER);
+        assertEquals(displayName, user.getDisplayName(), "Имя пользователя должно обновиться");
+    }
+
+
+    @Test
+    void testUpdateAvatar() {
+        authService.register(TEST_USER, TEST_PASS);
+
+        String avatarUrl = "avatars/Света.jpg";
+        boolean updateResult = authService.updateAvatar(TEST_USER, avatarUrl);
+
+        assertTrue(updateResult, "Обновление аватара должно быть успешным");
+
+        User user = authService.getUserProfile(TEST_USER);
+        assertEquals(avatarUrl, user.getAvatarUrl(), "URL аватара должен обновиться");
     }
 
     @Test

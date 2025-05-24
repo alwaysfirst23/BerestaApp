@@ -196,16 +196,10 @@ public class MainController {
     private void setupMenuButton(Button menuButton) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem themeItem = new MenuItem("Тема");
-        MenuItem timeItem = new MenuItem("Тайм менеджмент");
         MenuItem pomodoroSettings = new MenuItem("Настройки Pomodoro");
 
         themeItem.setOnAction(e -> {
             changeTheme();
-            contextMenu.hide();
-        });
-
-        timeItem.setOnAction(e -> {
-            showTimeManagement();
             contextMenu.hide();
         });
 
@@ -214,7 +208,7 @@ public class MainController {
             contextMenu.hide();
         });
 
-        contextMenu.getItems().addAll(themeItem, timeItem, pomodoroSettings);
+        contextMenu.getItems().addAll(themeItem, pomodoroSettings);
         menuButton.setOnMouseClicked(e -> {
             contextMenu.show(menuButton, e.getScreenX(), e.getScreenY());
         });
@@ -329,10 +323,6 @@ public class MainController {
         System.out.println("Смена темы...");
     }
 
-    private void showTimeManagement() {
-        // Логика отображения окна тайм-менеджмента
-        System.out.println("Тайм-менеджмент...");
-    }
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
