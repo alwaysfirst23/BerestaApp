@@ -83,6 +83,7 @@ public class MainController {
             e.printStackTrace();
             showAlert("Ошибка", "Не удалось загрузить вкладку задач");
         }
+        loadStatsTab();
     }
 
     private void initPomodoroTimer() {
@@ -120,6 +121,16 @@ public class MainController {
         } catch (Exception e) {
             System.err.println("Ошибка инициализации Pomodoro Timer: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void loadStatsTab() {
+        Tab statsTab = tabPane.getTabs().get(2); // 3-я вкладка
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/stats_tab.fxml"));
+            statsTab.setContent(loader.load());
+        } catch (IOException e) {
+            statsTab.setContent(new Label("Вкладка статистики не загружена"));
         }
     }
 

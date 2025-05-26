@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.demo.presentation.main.StatsTabController"
+      spacing="20"
+      stylesheets="@styles.css"
+      style="-fx-background-color: #F5F5F5;">
+
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20"/>
+    </padding>
+
+    <Label text="Статистика проекта" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+
+    <!-- ProgressBar с индикатором готовности -->
+    <VBox spacing="5">
+        <Label text="Общая готовность проекта:" style="-fx-font-weight: bold;"/>
+        <ProgressBar fx:id="projectProgress" progress="0.8" prefWidth="500" prefHeight="20"/>
+        <Label text="80%" style="-fx-text-fill: #8FD3E2; -fx-font-weight: bold; -fx-alignment: CENTER;"/>
+    </VBox>
+
+    <HBox spacing="20">
+        <PieChart fx:id="deadlineComplianceChart"
+                  title="Соблюдение дедлайнов"
+                  legendVisible="true"
+                  prefHeight="300" prefWidth="300"/>
+
+        <PieChart fx:id="taskStatusChart"
+                  title="Статус задач"
+                  legendVisible="true"
+                  prefHeight="300" prefWidth="300"/>
+    </HBox>
+
+    <HBox spacing="20">
+        <PieChart fx:id="priorityDistributionChart"
+                  title="Распределение по приоритетам"
+                  legendVisible="true"
+                  prefHeight="300" prefWidth="300"/>
+
+        <PieChart fx:id="taskTypeChart"
+                  title="Типы задач"
+                  legendVisible="true"
+                  prefHeight="300" prefWidth="300"/>
+    </HBox>
+</VBox>

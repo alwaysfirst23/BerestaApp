@@ -295,6 +295,48 @@
     -fx-cursor: hand;
 }
 
+/* Добавьте этот файл в ресурсы и подключите к FXML */
+.chart {
+    -fx-background-color: transparent;
+}
+/* Основные стили для легенды */
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #333333;
+    -fx-font-size: 12px;
+}
+
+/* Стили для символов легенды (кружки) */
+.chart-legend-item-symbol {
+    -fx-background-radius: 8px;
+    -fx-padding: 6px;
+    -fx-background-color: #B0EAEB; /* Базовый цвет по умолчанию */
+}
+
+/* Стили для ProgressBar */
+.progress-bar {
+    -fx-indeterminate-bar-length: 60;
+    -fx-indeterminate-bar-escape: true;
+    -fx-indeterminate-bar-flip: true;
+    -fx-indeterminate-bar-animation-time: 2;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #E0E0E0;
+    -fx-background-radius: 5;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #8FD3E2, #B0EAEB);
+    -fx-background-radius: 5;
+    -fx-background-insets: 1;
+    -fx-padding: 0.2em;
+}
+
 /* Стиль для контейнера подзадач */
 .subtasks-container {
     -fx-spacing: 5;
