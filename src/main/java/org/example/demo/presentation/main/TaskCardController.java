@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -184,6 +185,9 @@ public class TaskCardController {
                 checkIcon.setVisible(true);
                 markAsDoneButton.setDisable(true);
 
+                // Показываем уведомление
+                showCompletionNotification();
+
                 if (refreshCallback != null) {
                     refreshCallback.run();
                 }
@@ -191,6 +195,28 @@ public class TaskCardController {
                 showAlert("Ошибка", "Не удалось обновить задачу");
             }
         }
+    }
+
+    private void showCompletionNotification() {
+        // Создаем кастомное уведомление
+        Alert notification = new Alert(Alert.AlertType.INFORMATION);
+        notification.setTitle("Задача выполнена");
+        notification.setHeaderText(null);
+        notification.setContentText("Спасибо! За эту задачу вы получите вознаграждение после проверки тимлидом");
+
+        // Добавляем иконку
+        ImageView icon = new ImageView(new Image(Objects.requireNonNull(
+                getClass().getResourceAsStream("/checkmark.png"))));
+        icon.setFitHeight(50);
+        icon.setFitWidth(50);
+        notification.setGraphic(icon);
+
+        // Настраиваем стиль
+        notification.getDialogPane().getStylesheets().add(
+                getClass().getResource("/styles.css").toExternalForm());
+        notification.getDialogPane().getStyleClass().add("reward-notification");
+
+        notification.show();
     }
 
     @FXML
