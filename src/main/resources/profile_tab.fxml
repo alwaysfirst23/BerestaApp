@@ -9,21 +9,23 @@
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.demo.presentation.main.ProfileTabController"
       alignment="CENTER"
       spacing="20"
       style="-fx-background-color: #313333; -fx-padding: 30;">
 
-    <ImageView fitHeight="150.0" fitWidth="150.0" preserveRatio="true">
-        <image>
-            <Image url="@profile.png" />
-        </image>
-    </ImageView>
+    <ImageView fx:id="avatarImageView"
+               fitHeight="150.0"
+               fitWidth="150.0"
+               preserveRatio="true"/>
 
-    <Label text="Имя пользователя" style="-fx-text-fill: #B0EAEB;">
+    <Label fx:id="usernameLabel"
+           style="-fx-text-fill: #B0EAEB;">
         <font>
             <Font size="24.0" />
         </font>
     </Label>
 
-    <Label text="Здесь будет информация профиля" style="-fx-text-fill: #D3F5F5;"/>
+    <Label fx:id="userInfoLabel"
+           style="-fx-text-fill: #D3F5F5;"/>
 </VBox>

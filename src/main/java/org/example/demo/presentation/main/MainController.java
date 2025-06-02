@@ -108,6 +108,9 @@ public class MainController {
         profileTab.setClosable(false);
         tabPane.getTabs().add(profileTab);
 
+        // Загружаем вкладку профиля
+        loadProfileTab();
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/profile_tab.fxml"));
             profileTab.setContent(loader.load());
@@ -172,6 +175,23 @@ public class MainController {
             statsTab.setContent(loader.load());
         } catch (IOException e) {
             statsTab.setContent(new Label("Вкладка статистики не загружена"));
+        }
+    }
+
+    private void loadProfileTab() {
+        Tab profileTab = tabPane.getTabs().stream()
+                .filter(tab -> "Профиль".equals(tab.getText()))
+                .findFirst()
+                .orElse(null);
+
+        if (profileTab != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/profile_tab.fxml"));
+                profileTab.setContent(loader.load());
+            } catch (IOException e) {
+                profileTab.setContent(new Label("Не удалось загрузить профиль"));
+                e.printStackTrace();
+            }
         }
     }
 
