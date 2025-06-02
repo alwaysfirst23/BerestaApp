@@ -27,17 +27,17 @@ public class AuthService {
     }
 
     /**
-     * Реализует логику авторизациипользователя
+     * Реализует логику авторизации пользователя
      * @param username login, юзернейм
      * @param password пароль
-     * @return true, если авторизация успешна, false, если неправильные данные
+     * @return Объект User если авторизация успешна, null если неправильные данные
      */
-    public boolean login(String username, String password) {
+    public User login(String username, String password) {
         User user = userRepository.findUserByUsername(username);
-        if (user != null) {
-            return BCrypt.checkpw(password, user.getPassword()); // Проверка пароля
+        if (user != null && BCrypt.checkpw(password, user.getPassword())) {
+            return user;
         }
-        return false;
+        return null;
     }
 
     /**

@@ -488,3 +488,23 @@
 .chart-legend-item {
     -fx-text-fill: #D3F5F5;
 }
+
+/* Стили для вкладки профиля */
+.profile-tab {
+    -fx-background-color: #313333;
+}
+
+.profile-image {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 0);
+}
+
+.profile-name {
+    -fx-text-fill: #B0EAEB;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.profile-info {
+    -fx-text-fill: #D3F5F5;
+    -fx-font-size: 14px;
+}

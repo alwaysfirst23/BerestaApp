@@ -5,8 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import lombok.Setter;
+import org.example.demo.domain.CurrentUser;
+import org.example.demo.domain.User;
 import org.example.demo.services.AuthService;
 import org.example.demo.services.DialogHelper;
 
@@ -42,9 +43,12 @@ public class AuthController {
             return;
         }
 
-        boolean loginResult = authService.login(username, password);
+        User authenticatedUser = authService.login(username, password);
 
-        if (loginResult) {
+        if (authenticatedUser != null) {
+            // Сохраняем данные пользователя
+            CurrentUser.setInstance(authenticatedUser);
+
             dialogHelper.showInfoDialog("Успешно", "Авторизация прошла успешно");
             if (onSuccessAuth != null) {
                 onSuccessAuth.run();

@@ -10,6 +10,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.StageStyle;
 import javafx.util.Pair;
+import org.example.demo.domain.CurrentUser;
 import org.example.demo.domain.Task;
 import org.example.demo.infrastructure.DatabaseConnector;
 import org.example.demo.infrastructure.DatabaseSubtaskRepository;
@@ -62,6 +63,11 @@ public class MainController {
 
     private PomodoroTimer pomodoroTimer;
 
+    // Отображаем данные пользователя
+    String username = CurrentUser.getUsername();
+    String displayName = CurrentUser.getDisplayName();
+    String avatarUrl = CurrentUser.getAvatarUrl();
+
     /**
      * Метод инициализации контроллера.
      * Настраивает элементы интерфейса и загружает данные задач.
@@ -70,6 +76,8 @@ public class MainController {
      */
     @FXML
     public void initialize() throws IOException {
+        System.out.println("Текущий пользователь: " + displayName);
+        System.out.println("Аватар: " + avatarUrl);
         setupTopPanel();
         setupTabPane();
         setupRoundButton();
@@ -94,6 +102,19 @@ public class MainController {
             showAlert("Ошибка", "Не удалось загрузить вкладку задач");
         }
         loadStatsTab();
+
+        // Добавляем вкладку профиля
+        Tab profileTab = new Tab("Профиль");
+        profileTab.setClosable(false);
+        tabPane.getTabs().add(profileTab);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/profile_tab.fxml"));
+            profileTab.setContent(loader.load());
+        } catch (IOException e) {
+            profileTab.setContent(new Label("Не удалось загрузить профиль"));
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -245,8 +266,8 @@ public class MainController {
      * Отображает профиль пользователя
      */
     private void showProfile() {
-        // Логика просмотра профиля
-        System.out.println("Профиль...");
+        // Переключаемся на вкладку профиля (последняя вкладка)
+        tabPane.getSelectionModel().select(tabPane.getTabs().size() - 1);
     }
 
     /**

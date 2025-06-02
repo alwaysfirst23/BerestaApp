@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      alignment="CENTER"
+      spacing="20"
+      style="-fx-background-color: #313333; -fx-padding: 30;">
+
+    <ImageView fitHeight="150.0" fitWidth="150.0" preserveRatio="true">
+        <image>
+            <Image url="@profile.png" />
+        </image>
+    </ImageView>
+
+    <Label text="Имя пользователя" style="-fx-text-fill: #B0EAEB;">
+        <font>
+            <Font size="24.0" />
+        </font>
+    </Label>
+
+    <Label text="Здесь будет информация профиля" style="-fx-text-fill: #D3F5F5;"/>
+</VBox>
