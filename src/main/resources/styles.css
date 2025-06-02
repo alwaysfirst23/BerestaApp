@@ -410,3 +410,81 @@
 .reward-notification .button-bar .button:hover {
     -fx-background-color: #8FD3E2;
 }
+
+/* Стили для заголовка */
+.stats-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #b0eaeb;
+}
+
+/* Стили для кнопки обновления */
+.refresh-button {
+    -fx-background-color: #B0EAEB;
+    -fx-text-fill: #2D2F2F;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 5;
+}
+
+.refresh-button:hover {
+    -fx-background-color: #C1F0F0;
+}
+
+/* Стили для прогресс-бара */
+.progress-container {
+    -fx-padding: 0 0 10 0;
+}
+
+.progress-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #B0EAEB;
+}
+
+.progress-percent {
+    -fx-text-fill: #D3F5F5;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.custom-progress-bar {
+    -fx-accent: #B0EAEB;
+    -fx-pref-height: 24px;
+    -fx-background-insets: 0;
+    -fx-padding: 1;
+}
+
+.custom-progress-bar .track {
+    -fx-background-color: #3D3F3F;
+    -fx-background-radius: 5;
+}
+
+.custom-progress-bar .bar {
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.progress-text {
+    -fx-text-fill: #2D2F2F;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+/* Стили для диаграмм */
+.pie-chart {
+    -fx-background-color: transparent;
+    -fx-legend-visible: true;
+}
+
+.pie-chart .chart-title {
+    -fx-text-fill: #2D2F2F;
+    -fx-font-size: 14px;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #D3F5F5;
+}
