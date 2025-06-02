@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
@@ -13,16 +13,26 @@
       spacing="20"
       style="-fx-background-color: #313333; -fx-padding: 30;">
 
-    <ImageView fx:id="avatarImageView"
-               fitHeight="150" fitWidth="150"
-               preserveRatio="true"
-               styleClass="profile-avatar"/>
+    <!-- Аватар с кнопкой изменения -->
+    <StackPane>
+        <ImageView fx:id="avatarImageView"
+                   fitHeight="150" fitWidth="150"
+                   preserveRatio="true"
+                   styleClass="profile-avatar"/>
+
+        <Button fx:id="changeAvatarBtn"
+                text="Изменить аватар"
+                style="-fx-background-color: rgba(0,0,0,0.7); -fx-text-fill: white;"
+                StackPane.alignment="BOTTOM_CENTER"
+                onAction="#handleChangeAvatar"/>
+    </StackPane>
 
     <Label fx:id="usernameLabel"
-           styleClass="profile-username"/>
-
-    <Label fx:id="userInfoLabel"
-           styleClass="profile-info"/>
+           style="-fx-text-fill: #B0EAEB;">
+        <font>
+            <Font size="24.0" />
+        </font>
+    </Label>
 
     <!-- Форма редактирования (изначально скрыта) -->
     <GridPane fx:id="editForm"
@@ -44,6 +54,8 @@
         </HBox>
     </GridPane>
 
+    <Label fx:id="userInfoLabel"
+           style="-fx-text-fill: #D3F5F5;"/>
     <Button text="Изменить имя"
             onAction="#handleEditName"
             style="-fx-background-color: #B0EAEB; -fx-text-fill: #2D2F2F;"/>

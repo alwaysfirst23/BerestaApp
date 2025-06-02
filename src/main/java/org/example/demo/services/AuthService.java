@@ -4,6 +4,8 @@ import org.example.demo.domain.User;
 import org.example.demo.infrastructure.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.io.File;
+
 /**
  * Реализует логику взаимодействия с базой данных - регистрацию и авторизацию
  */
@@ -41,25 +43,6 @@ public class AuthService {
     }
 
     /**
-     * Обновляет аватар пользователя
-     * @param username Логин пользователя
-     * @param avatarUrl URL или путь к аватару
-     * @return true если обновление успешно
-     */
-    public boolean updateAvatar(String username, String avatarUrl) {
-        if (username == null || username.isBlank()) {
-            return false;
-        }
-
-        // Опционально: валидация URL/пути
-        if (!isValidAvatarUrl(avatarUrl)) {
-            return false;
-        }
-
-        return userRepository.updateUserField(username, "avatar_url", avatarUrl);
-    }
-
-    /**
      * Получает полную информацию о пользователе
      * @param username Логин пользователя
      * @return Объект User или null если не найден
@@ -68,13 +51,43 @@ public class AuthService {
         return userRepository.findUserByUsername(username);
     }
 
-    // Простая валидация URL аватара
-    private boolean isValidAvatarUrl(String url) {
-        if (url == null || url.isBlank()) {
-            return true; // Разрешаем null/пустую строку
+    /**
+     * Обновляет аватар пользователя
+     * @param username Логин пользователя
+     * @param avatarPath URL или путь к аватару
+     * @return true если обновление успешно
+     */
+
+    public boolean updateAvatar(String username, String avatarPath) {
+        if (username == null || username.isBlank()) {
+            return false;
         }
-        // Проверяем допустимые расширения файлов
-        return url.matches("(?i).*\\.(png|jpg|jpeg|gif|svg|webp)$");
+
+        if (avatarPath == null || avatarPath.isBlank()) {
+            return false;
+        }
+
+        // Проверяем расширение файла
+        String extension = avatarPath.substring(avatarPath.lastIndexOf(".") + 1).toLowerCase();
+        if (!extension.matches("png|jpg|jpeg|gif")) {
+            return false;
+        }
+
+        return userRepository.updateUserField(username, "avatar_url", avatarPath);
+    }
+
+    private boolean isValidImageUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return false;
+        }
+
+        // Проверяем локальные файлы
+        if (url.startsWith("file:")) {
+            return true;
+        }
+
+        // Проверяем URL изображений
+        return url.matches("(?i).*\\.(png|jpg|jpeg|gif|svg|webp)(\\?.*)?$");
     }
 
     /**

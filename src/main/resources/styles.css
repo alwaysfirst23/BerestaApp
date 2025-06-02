@@ -545,3 +545,24 @@
     -fx-padding: 5 15;
     -fx-font-weight: bold;
 }
+
+/* Стили для аватарки */
+.profile-avatar {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 0);
+    -fx-background-radius: 75;
+    -fx-border-radius: 75;
+    -fx-border-width: 2;
+    -fx-border-color: #B0EAEB;
+}
+
+#changeAvatarBtn {
+    -fx-background-radius: 15;
+    -fx-padding: 5 15;
+    -fx-font-size: 12px;
+    -fx-background-color: rgba(0,0,0,0.7);
+    -fx-text-fill: white;
+}
+
+#changeAvatarBtn:hover {
+    -fx-background-color: rgba(0,0,0,0.9);
+}
