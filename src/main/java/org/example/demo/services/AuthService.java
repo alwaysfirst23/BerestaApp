@@ -41,19 +41,6 @@ public class AuthService {
     }
 
     /**
-     * Обновляет отображаемое имя пользователя
-     * @param username Логин пользователя
-     * @param displayName Новое отображаемое имя
-     * @return true если обновление успешно
-     */
-    public boolean updateDisplayName(String username, String displayName) {
-        if (username == null || username.isBlank()) {
-            return false;
-        }
-        return userRepository.updateUserField(username, "display_name", displayName);
-    }
-
-    /**
      * Обновляет аватар пользователя
      * @param username Логин пользователя
      * @param avatarUrl URL или путь к аватару
@@ -88,5 +75,24 @@ public class AuthService {
         }
         // Проверяем допустимые расширения файлов
         return url.matches("(?i).*\\.(png|jpg|jpeg|gif|svg|webp)$");
+    }
+
+    /**
+     * Обновляет отображаемое имя пользователя с валидацией
+     */
+    public boolean updateDisplayName(String username, String displayName) {
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+
+        if (displayName == null || displayName.isBlank()) {
+            return false;
+        }
+
+        if (displayName.length() > 50) {
+            return false;
+        }
+
+        return userRepository.updateUserField(username, "display_name", displayName);
     }
 }

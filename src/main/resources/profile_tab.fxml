@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
@@ -15,17 +14,37 @@
       style="-fx-background-color: #313333; -fx-padding: 30;">
 
     <ImageView fx:id="avatarImageView"
-               fitHeight="150.0"
-               fitWidth="150.0"
-               preserveRatio="true"/>
+               fitHeight="150" fitWidth="150"
+               preserveRatio="true"
+               styleClass="profile-avatar"/>
 
     <Label fx:id="usernameLabel"
-           style="-fx-text-fill: #B0EAEB;">
-        <font>
-            <Font size="24.0" />
-        </font>
-    </Label>
+           styleClass="profile-username"/>
 
     <Label fx:id="userInfoLabel"
-           style="-fx-text-fill: #D3F5F5;"/>
+           styleClass="profile-info"/>
+
+    <!-- Форма редактирования (изначально скрыта) -->
+    <GridPane fx:id="editForm"
+              visible="false"
+              hgap="10" vgap="10"
+              style="-fx-padding: 20;">
+        <Label text="Новое имя:"
+               style="-fx-text-fill: #B0EAEB;"/>
+        <TextField fx:id="nameField"
+                   GridPane.columnIndex="1"/>
+
+        <HBox spacing="10" GridPane.columnSpan="2" GridPane.rowIndex="1">
+            <Button text="Сохранить"
+                    onAction="#handleSaveName"
+                    style="-fx-background-color: #B0EAEB; -fx-text-fill: #2D2F2F;"/>
+            <Button text="Отмена"
+                    onAction="#handleCancelEdit"
+                    style="-fx-background-color: #A0D0D0; -fx-text-fill: #2D2F2F;"/>
+        </HBox>
+    </GridPane>
+
+    <Button text="Изменить имя"
+            onAction="#handleEditName"
+            style="-fx-background-color: #B0EAEB; -fx-text-fill: #2D2F2F;"/>
 </VBox>

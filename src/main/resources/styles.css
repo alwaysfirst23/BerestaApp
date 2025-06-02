@@ -504,7 +504,44 @@
     -fx-font-weight: bold;
 }
 
+/* Стили для вкладки профиля */
+.profile-tab {
+    -fx-background-color: #313333;
+    -fx-padding: 30px;
+}
+
+.profile-avatar {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 0);
+}
+
+.profile-username {
+    -fx-text-fill: #B0EAEB;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
 .profile-info {
     -fx-text-fill: #D3F5F5;
     -fx-font-size: 14px;
+    -fx-alignment: center;
+}
+
+/* Стили формы редактирования */
+.edit-form {
+    -fx-background-color: #3D3F3F;
+    -fx-background-radius: 10;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0.5, 0, 0);
+}
+
+.edit-form .text-field {
+    -fx-background-color: #f3ffff;
+    -fx-background-radius: 5;
+    -fx-pref-width: 200;
+}
+
+.edit-form .button {
+    -fx-background-radius: 5;
+    -fx-padding: 5 15;
+    -fx-font-weight: bold;
 }

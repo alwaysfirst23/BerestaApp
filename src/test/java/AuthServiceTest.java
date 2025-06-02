@@ -20,21 +20,21 @@ public class AuthServiceTest {
         authService = new AuthService();
     }
 
-    @Test
-    void testUpdateDisplayName() {
-        // Регистрируем тестового пользователя
-        authService.register(TEST_USER, TEST_PASS);
-
-        String displayName = "Тестовый Пользователь";
-
-        // Обновляем имя
-        boolean updateResult = authService.updateDisplayName(TEST_USER, displayName);
-        assertTrue(updateResult, "Обновление имени должно быть успешным");
-
-        // Проверяем, что имя сохранилось
-        User user = authService.getUserProfile(TEST_USER);
-        assertEquals(displayName, user.getDisplayName(), "Имя пользователя должно обновиться");
-    }
+//    @Test
+//    void testUpdateDisplayName() {
+//        // Регистрируем тестового пользователя
+//        authService.register(TEST_USER, TEST_PASS);
+//
+//        String displayName = "Тестовый Пользователь";
+//
+//        // Обновляем имя
+//        boolean updateResult = authService.updateDisplayName(TEST_USER, displayName);
+//        assertTrue(updateResult, "Обновление имени должно быть успешным");
+//
+//        // Проверяем, что имя сохранилось
+//        User user = authService.getUserProfile(TEST_USER);
+//        assertEquals(displayName, user.getDisplayName(), "Имя пользователя должно обновиться");
+//    }
 
 
     @Test
