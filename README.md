@@ -13,6 +13,6 @@
 - Java 22
 - JavaFX (GUI)
 - Apache Maven (сборка)
-- SQLite (базы данных), предполагается расширение в MySQL или PostgreSQL
+- SQLite (базы данных), предполагается расширение в PostgreSQL
 
 
